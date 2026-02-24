@@ -1,13 +1,15 @@
 <script setup lang="ts">
 const { ingredient } = defineProps({
-  ingredient: Array<String>
+  ingredient: String
 })
-const ingredients = ingredient?.map((element: any) => {
-  return Identifier.parse(element)
-});
-console.log(ingredients)
+
+const isSingle = !ingredient?.includes(",")
+const ingredientList = isSingle ? [ingredient] : ingredient?.split(", ")
 </script>
 
 <template>
-  <ItemImage :item="ingredients?.at(0)"/>
+  <!-- <ItemImage :item="Identifier.parse(ingredient)"/> -->
+  <div v-for="i in ingredientList" class="inline-block">
+    <ItemImage :item="Identifier.parse(typeof i == 'string' ? i : '')"/>
+  </div>
 </template>

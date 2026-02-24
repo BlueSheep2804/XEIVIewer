@@ -1,12 +1,13 @@
 <script setup lang="ts">
-const { item } = defineProps(["item"])
-const identifier = (item instanceof Identifier) ? item : new Identifier(item.namespace, item.name)
-const imageUrl = `/assets/items/${identifier.namespace}/${identifier.path}.png`
-const linkUrl = `/item/${identifier.full}`
+const { item: identifier } = defineProps({
+  item: Identifier
+})
+const imageUrl = `/assets/items/${identifier?.namespace}/${identifier?.path}.png`
+const linkUrl = `/item/${identifier?.full}`
 </script>
 
 <template>
-  <NuxtLink :to="linkUrl">
-    <img :src="imageUrl">
+  <NuxtLink :to="linkUrl" class="inline">
+    <img :src="imageUrl" class="border-2 border-gray-700 bg-gray-400">
   </NuxtLink>
 </template>

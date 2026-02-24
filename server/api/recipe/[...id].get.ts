@@ -1,21 +1,21 @@
 import { and, eq } from "drizzle-orm";
-import { recipeSmelting } from "../../../shared/schema";
+import { recipes } from "../../../shared/schema";
 import { db } from "../../utils/db";
 
 export default eventHandler(async (event) => {
-  const parsedResourceLocation = Identifier.parse(getRouterParam(event, "id") ?? "")
+  const id = getRouterParam(event, "id") ?? "";
+  const parsedResourceLocation = Identifier.parse(id);
   const result = await db
     .select()
-    .from(recipeSmelting)
+    .from(recipes)
     .where(
       and(
-        eq(recipeSmelting.namespace, parsedResourceLocation.namespace),
-        eq(recipeSmelting.path, parsedResourceLocation.path)
+        eq(recipes.namespace, parsedResourceLocation.namespace),
+        eq(recipes.path, parsedResourceLocation.path)
       )
     )
     .limit(1)
-    .then((value) => {
-      return value[0]
-    })
-    return result
-})
+    .then((value) => value[0]);
+
+  return result;
+});

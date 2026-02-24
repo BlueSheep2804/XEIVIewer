@@ -10,13 +10,18 @@ export const items = pgTable("items", {
 	class: text().notNull(),
 });
 
-export const recipeSmelting = pgTable("recipe_smelting", {
-	id: serial().notNull(),
+export const recipes = pgTable("recipes", {
+	id: serial().primaryKey().notNull(),
 	namespace: text().notNull(),
 	path: text().notNull(),
-	input: text().array().array().notNull(),
-	output: text().array().array().notNull(),
+	type: text().notNull(),
+	input: text().array().notNull(),
+	output: text().array().notNull(),
+});
+
+export const recipeType = pgTable("recipe_type", {
+	id: text().primaryKey().notNull(),
+	tableName: text("table_name").notNull(),
 });
 
 export type Item = typeof items.$inferSelect
-export type SmeltingRecipe = typeof recipeSmelting.$inferSelect
