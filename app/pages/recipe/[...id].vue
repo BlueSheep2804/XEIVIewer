@@ -16,8 +16,8 @@
         <UCard class="m-2">
           <UIcon name="bi:grid-3x3-gap-fill" class="size-8"/>
           <h2 class="text-lg font-semibold">材料</h2>
-          <div v-for="input in recipeData.input">
-            <IngredientSlot :ingredient="input" />
+          <div class="grid grid-cols-3 gap-2 justify-items-center w-fit">
+            <IngredientSlot v-for="input in recipeData.input" :ingredient="input"/>
           </div>
           <!-- <p>{{ recipeData.input }}</p> -->
         </UCard>
