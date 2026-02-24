@@ -8,8 +8,7 @@ const ingredientList = isSingle ? [ingredient] : ingredient?.split(", ")
 </script>
 
 <template>
-  <!-- <ItemImage :item="Identifier.parse(ingredient)"/> -->
-  <div v-for="i in ingredientList" class="inline-block">
+  <div v-for="i in ingredientList" class="inline-flex">
     <ItemImage :item="Identifier.parse(typeof i == 'string' ? i : '')"/>
   </div>
 </template>

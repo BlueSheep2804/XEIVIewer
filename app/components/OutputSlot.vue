@@ -2,14 +2,12 @@
 const { output } = defineProps({
   output: String
 })
-
-const match = output?.match(/^(?<count>\d+x )?(?<id>[0-9a-z_/.-]+:[0-9a-z_/.-]+)$/)
-const count = match?.groups?.count
-const id = Identifier.parse(match?.groups?.id ?? "")
-console.log(match?.groups)
+const {identifier, count} = parseEntry(output ?? "")
 </script>
 
 <template>
-  <!-- <ItemImage :item="Identifier.parse(ingredient)"/> -->
-  <ItemImage :item="id"/>
+  <div class="inline-flex flex-row-reverse items-end-safe">
+    <ItemImage :item="identifier" :show-link="false" class="block"/>
+    <div v-if="count !== 1" class="absolute p-0.5 m-1 bg-gray-900 backdrop-opacity-20 rounded">{{ count }}</div>
+  </div>
 </template>
