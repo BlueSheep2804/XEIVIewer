@@ -21,7 +21,9 @@ export const recipes = pgTable("recipes", {
 
 export const recipeType = pgTable("recipe_type", {
 	id: text().primaryKey().notNull(),
-	tableName: text("table_name").notNull(),
+	catalyst: text().array().notNull(),
+	inputSize: integer().notNull(),
+	outputSize: integer().notNull(),
 });
 
 export type Item = typeof items.$inferSelect
