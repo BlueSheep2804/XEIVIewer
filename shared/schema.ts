@@ -27,3 +27,5 @@ export const recipeType = pgTable("recipe_type", {
 });
 
 export type Item = typeof items.$inferSelect
+export type Recipe = typeof recipes.$inferInsert
+export type RecipeType = typeof recipeType.$inferSelect

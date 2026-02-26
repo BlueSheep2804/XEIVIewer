@@ -3,7 +3,7 @@ const { ingredient } = defineProps({
   ingredient: String
 })
 
-const isSingle = !ingredient?.includes(",")
+const isSingle = !(ingredient?.includes(",") ?? true)
 const ingredientList = (isSingle ? [ingredient] : ingredient?.split(", "))?.map((value) => Identifier.parse(value ?? "")) ?? []
 
 const open = ref(false)

@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { recipeType } from "../../../shared/schema";
 import { db } from "../../utils/db";
 

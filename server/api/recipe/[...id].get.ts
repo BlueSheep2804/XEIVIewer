@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { recipes } from "../../../shared/schema";
+import { recipes, recipeType } from "../../../shared/schema";
 import { db } from "../../utils/db";
 
 export default eventHandler(async (event) => {
@@ -8,6 +8,7 @@ export default eventHandler(async (event) => {
   const result = await db
     .select()
     .from(recipes)
+    .leftJoin(recipeType, eq(recipes.type, recipeType.id))
     .where(
       and(
         eq(recipes.namespace, parsedResourceLocation.namespace),

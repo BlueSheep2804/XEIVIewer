@@ -18,13 +18,7 @@
     <UPageSection>
         <div v-for="recipe in allRecipes">
           <NuxtLink :to="`/recipe/${recipeLink(recipe.namespace, recipe.path)}`">
-            <div class="bg-blue-950 flex items-center p-4 rounded-lg">
-              <IngredientSlot :ingredient="getRecipeType(recipe.type)" class="mr-8"/>
-              <IngredientSlot v-for="value in recipe.input" :ingredient="value"/>
-              <UIcon name="bi:arrow-right-square-fill" class="size-8 m-4"/>
-              <OutputSlot v-for="value in recipe.output" :output="value"/>
-              <!-- {{recipe}} -->
-            </div>
+            <RecipeView :recipe="recipe" :recipe-type="getRecipeType(recipe.type)"/>
           </NuxtLink>
         </div>
     </UPageSection>
