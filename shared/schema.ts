@@ -10,6 +10,13 @@ export const items = pgTable("items", {
 	class: text().notNull(),
 });
 
+export const tagsItem = pgTable("tags_item", {
+	id: serial().primaryKey().notNull(),
+	namespace: text().notNull(),
+	path: text().notNull(),
+	entry: text().array().notNull(),
+});
+
 export const recipes = pgTable("recipes", {
 	id: serial().primaryKey().notNull(),
 	namespace: text().notNull(),
