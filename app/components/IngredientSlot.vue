@@ -1,31 +1,61 @@
 <script setup lang="ts">
-const { ingredient } = defineProps({
-  ingredient: String
-})
+type Props = {
+  ingredient: string
+}
+const { ingredient } = defineProps<Props>()
 
-const isSingle = !(ingredient?.includes(",") ?? true)
-const ingredientList = (isSingle ? [ingredient] : ingredient?.split(", "))?.map((value) => Identifier.parse(value ?? "")) ?? []
+const ingredientList = new Ingredient(ingredient)
+
+const tagList = await Promise.all(ingredientList.value.map(element => {
+  if (element.isTag) {
+    const { data: tag } = useFetch(() => `/api/tag/item/${element.value.full}`, {
+      server: false
+    })
+    return tag
+  } else {
+    return null
+  }
+}));
+
+const getFirstItem = computed(() => {
+  console.log(ingredientList.value)
+  const first = ingredientList.value[0]
+  if (first?.isTag ?? false) {
+    return Identifier.parse(tagList[0]?.value?.entry[0] ?? "")
+  }
+  return ingredientList.value[0]?.value ?? Identifier.parse("")
+})
+const isOnlySingleItem = computed(() => {
+  return ingredientList.value.length > 1 || ingredientList.value[0]?.isTag
+})
+const isOnlyTag = computed(() => {
+  return tagList.length == 1 && typeof tagList[0] !== "undefined"
+})
 
 const open = ref(false)
 </script>
 
 <template>
-  <div v-if="ingredientList.length > 1" class="inline-flex">
+  <div v-if="isOnlySingleItem" class="inline-flex">
     <UPopover arrow v-model:open="open" :ui="{ content: 'p-4'}">
       <template #anchor>
-        <a href="#" @click.prevent="open = true" class="inline-flex">
-          <ItemImage :item="ingredientList[0]" :show-link="false"/>
-          <UIcon name="bi:back" class="absolute p-0.5 m-1"></UIcon>
+        <a v-if="getFirstItem" href="#" @click.prevent="open = true" class="inline-flex">
+          <ItemImage :item="getFirstItem" :show-link="false"/>
+          <UIcon name="bi:back" class="absolute p-0.5 m-1"/>
         </a>
       </template>
       <template #content>
+        <h6 v-if="isOnlyTag" class="text-lg">#{{ ingredientList.value[0]?.value.full }}</h6>
         <div class="grid grid-cols-3 gap-2">
-          <ItemImage v-for="i in ingredientList" :item="i"/>
+          <template v-for="(ingredient, i) in ingredientList.value">
+            <ItemImage v-if="!ingredient.isTag" :item="ingredient.value"/>
+            <ItemImage v-else v-for="tag in tagList[i]?.value?.entry" :item="Identifier.parse(tag)"/>
+          </template>
         </div>
       </template>
     </UPopover>
   </div>
   <div v-else class="inline-flex">
-    <ItemImage :item="ingredientList[0]"/>
+    <ItemImage :item="getFirstItem"/>
   </div>
 </template>

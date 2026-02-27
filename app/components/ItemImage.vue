@@ -1,11 +1,12 @@
 <script setup lang="ts">
-const { item: identifier, showLink = true } = defineProps({
+type Props = {
   item: Identifier,
-  showLink: Boolean
-})
-const isNone = identifier?.path === ""
-const imageUrl = `/assets/items/${identifier?.namespace}/${identifier?.path}.png`
-const linkUrl = `/item/${identifier?.full}`
+  showLink?: Boolean
+}
+const { item: identifier, showLink = true } = defineProps<Props>()
+const isNone = computed(() => identifier.path === "")
+const imageUrl = computed(() => `/assets/items/${identifier.namespace}/${identifier.path}.png`)
+const linkUrl = computed(() => `/item/${identifier.full}`)
 </script>
 
 <template>
