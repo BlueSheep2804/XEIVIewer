@@ -4,6 +4,7 @@ type Props = {
   showLink?: Boolean
 }
 const { item: identifier, showLink = true } = defineProps<Props>()
+
 const isNone = computed(() => identifier.path === "")
 const imageUrl = computed(() => `/assets/items/${identifier.namespace}/${identifier.path}.png`)
 const linkUrl = computed(() => `/item/${identifier.full}`)
@@ -14,5 +15,5 @@ const linkUrl = computed(() => `/item/${identifier.full}`)
     <img :src="imageUrl" class="border-2 border-gray-700 bg-gray-400">
   </NuxtLink>
   <img v-else-if="!showLink && !isNone" :src="imageUrl" class="inline-block border-2 border-gray-700 bg-gray-400">
-  <div v-else class="inline-block w-17 h-17 border-2 border-gray-700 bg-gray-400"></div>
+  <div v-else class="inline-block w-full h-full border-2 border-gray-700 bg-gray-400"></div>
 </template>

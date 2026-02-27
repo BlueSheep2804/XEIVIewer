@@ -17,7 +17,7 @@ const getRecipeType = (): string => {
 </script>
 
 <template>
-  <div class="bg-blue-950 flex items-center p-4 rounded-lg">
+  <div class="flex items-center p-4 rounded-lg border-2 border-gray-700">
     <IngredientSlot v-if="recipeType" :ingredient="getRecipeType()" class="mr-8"/>
     <div class="grid grid-cols-3">
       <IngredientSlot v-for="value in recipe.input" :ingredient="value"/>

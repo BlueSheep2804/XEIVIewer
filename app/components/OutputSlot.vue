@@ -1,8 +1,9 @@
 <script setup lang="ts">
-const { output } = defineProps({
-  output: String
-})
-const {identifier, count} = parseEntry(output ?? "")
+type Props = {
+  output: string
+}
+const { output } = defineProps<Props>()
+const {identifier, count} = parseEntry(output)
 </script>
 
 <template>

@@ -55,7 +55,7 @@ const open = ref(false)
       </template>
     </UPopover>
   </div>
-  <div v-else class="inline-flex">
+  <div v-else class="inline-flex aspect-square">
     <ItemImage :item="getFirstItem"/>
   </div>
 </template>
