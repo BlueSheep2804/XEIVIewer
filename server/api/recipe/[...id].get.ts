@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { recipes, recipeType } from "../../../shared/schema";
+import { recipes, recipeType } from "~~/shared/schema";
 import { db } from "../../utils/db";
 
 export default eventHandler(async (event) => {

@@ -1,14 +1,7 @@
-import { integer, pgTable, serial, text } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, integer } from "drizzle-orm/pg-core"
+import { sql } from "drizzle-orm"
 
-export const items = pgTable("items", {
-	id: serial().primaryKey().notNull(),
-	namespace: text().notNull(),
-	name: text().notNull(),
-	descriptionId: text().notNull(),
-	maxDamage: integer().notNull(),
-	rarity: text().notNull(),
-	class: text().notNull(),
-});
+
 
 export const tagsItem = pgTable("tags_item", {
 	id: serial().primaryKey().notNull(),
@@ -33,6 +26,12 @@ export const recipeType = pgTable("recipe_type", {
 	outputSize: integer().notNull(),
 });
 
-export type Item = typeof items.$inferSelect
-export type Recipe = typeof recipes.$inferInsert
-export type RecipeType = typeof recipeType.$inferSelect
+export const items = pgTable("items", {
+	id: serial().primaryKey().notNull(),
+	namespace: text().notNull(),
+	name: text().notNull(),
+	descriptionId: text().notNull(),
+	maxDamage: integer().notNull(),
+	rarity: text().notNull(),
+	class: text().notNull(),
+});

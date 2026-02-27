@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Recipe, RecipeType } from '~~/shared/schema';
+import type { Recipe, RecipeType } from '~~/shared/tableTypes';
 
 interface Props {
   recipe: Recipe,
