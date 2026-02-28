@@ -1,4 +1,6 @@
-<script setup>
+<script setup lang="ts">
+import type { NavigationMenuItem } from '@nuxt/ui';
+
 useHead({
   meta: [
     { name: 'viewport', content: 'width=device-width, initial-scale=1' }
@@ -23,18 +25,40 @@ useSeoMeta({
   twitterImage: 'https://ui.nuxt.com/assets/templates/nuxt/starter-light.png',
   twitterCard: 'summary_large_image'
 })
+
+const navigationItems = computed<NavigationMenuItem[]>(() => [
+  {
+    label: "Items",
+    icon: "bi:magic",
+    to: "/items",
+  },
+  {
+    label: "Recipes",
+    icon: "bi:grid-3x3-gap-fill",
+    to: "/recipes",
+  },
+  {
+    label: "Tags",
+    icon: "bi:tags-fill",
+    children: [
+      {
+        label: "Item",
+        icon: "bi:magic",
+        to: "/tags/item",
+      }
+    ]
+  },
+])
 </script>
 
 <template>
   <UApp>
     <UHeader>
-      <template #left>
-        <NuxtLink to="/">
-          <AppLogo class="w-auto h-6 shrink-0" />
-        </NuxtLink>
-
-        <TemplateMenu />
+      <template #title>
+        <XEITitle/>
       </template>
+
+      <UNavigationMenu :items="navigationItems"/>
 
       <template #right>
         <UColorModeButton />
@@ -47,6 +71,10 @@ useSeoMeta({
           color="neutral"
           variant="ghost"
         />
+      </template>
+
+      <template #body>
+        <UNavigationMenu :items="navigationItems" orientation="vertical"/>
       </template>
     </UHeader>
 
