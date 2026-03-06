@@ -1,18 +1,36 @@
 <script setup lang="ts">
-  const { data: items } = await useFetch("/api/items", {
-    server: false
+  const { data } = await useFetch("/api/items", {
+    server: false,
+    lazy: true
   })
+
+  const items = computed(() => {
+    return data.value?.filter((value) => {
+      return commonSearch(search.value, value.namespace, value.name)
+    })
+  })
+
+  const search: Ref<ItemSearch> = ref({})
+
+  const searchEntries: ComputedRef<ItemSearchDefine> = computed(() => ({
+    mod_id: {
+      label: "ModID",
+      items: [...new Set(data.value?.map((value) => value.namespace))]
+    },
+    registry_id: {
+      label: "アイテムID",
+      items: []
+    }
+  }))
 </script>
 
 <template>
-  <div>
-    <!-- {{ items }} -->
-    <UPageSection>
-      <div class="grid justify-items-center gap-4 grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12">
-        <div v-for="item in items">
-          <ItemImage :item="new Identifier(item.namespace, item.name)" />
-        </div>
-      </div>
-    </UPageSection>
-  </div>
+  <UPageSection>
+    <SearchComponent :search="search" :entries="searchEntries"/>
+    <div class="grid justify-items-center gap-4 grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12">
+      <template v-for="item in items">
+        <ItemImage :item="new Identifier(item.namespace, item.name)"/>
+      </template>
+    </div>
+  </UPageSection>
 </template>
