@@ -7,18 +7,18 @@ interface Props {
 }
 const {recipe, recipeType} = defineProps<Props>()
 
-const getRecipeType = (): string => {
+const getRecipeType = computed((): string => {
   if (typeof recipeType === "string") {
     return recipeType
   } else {
-    return recipeType.catalyst[0] ?? ""
+    return recipeType.catalyst.join(",")
   }
-}
+})
 </script>
 
 <template>
   <div class="flex items-center p-4 rounded-lg border-2 border-gray-700">
-    <IngredientSlot v-if="recipeType" :ingredient="getRecipeType()" class="mr-8"/>
+    <IngredientSlot v-if="recipeType" :ingredient="getRecipeType" class="mr-8"/>
     <div class="grid grid-cols-3">
       <IngredientSlot v-for="value in recipe.input" :ingredient="value"/>
     </div>
