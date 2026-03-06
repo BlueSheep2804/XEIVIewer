@@ -22,8 +22,7 @@ const getRecipeType = computed((): string => {
     <div class="grid grid-cols-3">
       <IngredientSlot v-for="value in recipe.input" :ingredient="value"/>
     </div>
-    <UIcon name="bi:arrow-right-square-fill" class="size-8 m-4"/>
+    <UIcon name="lucide:arrow-right" class="size-8 m-4"/>
     <OutputSlot v-for="value in recipe.output" :output="value"/>
-    <!-- {{recipe}} -->
   </div>
 </template>

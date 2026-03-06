@@ -18,7 +18,6 @@ const tagList = await Promise.all(ingredientList.value.map(element => {
 }));
 
 const getFirstItem = computed(() => {
-  console.log(ingredientList.value)
   const first = ingredientList.value[0]
   if (first?.isTag ?? false) {
     return Identifier.parse(tagList[0]?.value?.entry[0] ?? "")
@@ -40,8 +39,9 @@ const open = ref(false)
     <UPopover arrow v-model:open="open" :ui="{ content: 'p-4'}">
       <template #anchor>
         <a v-if="getFirstItem" href="#" @click.prevent="open = true" class="inline-flex">
-          <ItemImage :item="getFirstItem" :show-link="false"/>
-          <UIcon name="bi:back" class="absolute p-0.5 m-1"/>
+          <UChip inset color="success" size="3xl">
+            <ItemImage :item="getFirstItem" :show-link="false"/>
+          </UChip>
         </a>
       </template>
       <template #content>
