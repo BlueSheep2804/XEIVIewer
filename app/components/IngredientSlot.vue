@@ -38,8 +38,8 @@ const open = ref(false)
   <div v-if="isOnlySingleItem" class="inline-flex">
     <UPopover arrow v-model:open="open" :ui="{ content: 'p-4'}">
       <template #anchor>
-        <a v-if="getFirstItem" href="#" @click.prevent="open = true" class="inline-flex">
-          <UChip inset color="success" size="3xl">
+        <a v-if="getFirstItem" href="#" @click.prevent="open = true" class="block">
+          <UChip inset color="success" size="3xl" class="block">
             <ItemImage :item="getFirstItem" :show-link="false"/>
           </UChip>
         </a>
