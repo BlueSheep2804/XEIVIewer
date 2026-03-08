@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { NavigationMenuItem } from '@nuxt/ui';
+import type { NavigationMenuItem } from '@nuxt/ui'
 
 useHead({
   meta: [
@@ -28,26 +28,26 @@ useSeoMeta({
 
 const navigationItems = computed<NavigationMenuItem[]>(() => [
   {
-    label: "Items",
-    icon: "bi:magic",
-    to: "/items",
+    label: 'Items',
+    icon: 'bi:magic',
+    to: '/items'
   },
   {
-    label: "Recipes",
-    icon: "bi:grid-3x3-gap-fill",
-    to: "/recipes",
+    label: 'Recipes',
+    icon: 'bi:grid-3x3-gap-fill',
+    to: '/recipes'
   },
   {
-    label: "Tags",
-    icon: "bi:tags-fill",
+    label: 'Tags',
+    icon: 'bi:tags-fill',
     children: [
       {
-        label: "Item",
-        icon: "bi:magic",
-        to: "/tags/item",
+        label: 'Item',
+        icon: 'bi:magic',
+        to: '/tags/item'
       }
     ]
-  },
+  }
 ])
 </script>
 
@@ -55,10 +55,10 @@ const navigationItems = computed<NavigationMenuItem[]>(() => [
   <UApp>
     <UHeader>
       <template #title>
-        <XEITitle/>
+        <XEITitle />
       </template>
 
-      <UNavigationMenu :items="navigationItems"/>
+      <UNavigationMenu :items="navigationItems" />
 
       <template #right>
         <UColorModeButton />
@@ -74,7 +74,7 @@ const navigationItems = computed<NavigationMenuItem[]>(() => [
       </template>
 
       <template #body>
-        <UNavigationMenu :items="navigationItems" orientation="vertical"/>
+        <UNavigationMenu :items="navigationItems" orientation="vertical" />
       </template>
     </UHeader>
 

@@ -1,10 +1,10 @@
-import { and, eq } from "drizzle-orm";
-import { recipes, recipeType } from "~~/shared/schema";
-import { db } from "../../utils/db";
+import { and, eq } from 'drizzle-orm'
+import { recipes, recipeType } from '~~/shared/schema'
+import { db } from '../../utils/db'
 
 export default eventHandler(async (event) => {
-  const id = getRouterParam(event, "id") ?? "";
-  const parsedResourceLocation = Identifier.parse(id);
+  const id = getRouterParam(event, 'id') ?? ''
+  const parsedResourceLocation = Identifier.parse(id)
   const result = await db
     .select()
     .from(recipes)
@@ -16,7 +16,7 @@ export default eventHandler(async (event) => {
       )
     )
     .limit(1)
-    .then((value) => value[0]);
+    .then(value => value[0])
 
-  return result;
-});
+  return result
+})

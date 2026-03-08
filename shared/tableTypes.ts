@@ -1,4 +1,4 @@
-import type { items, recipes, recipeType, tagsItem } from "./schema";
+import type { items, recipes, recipeType, tagsItem } from './schema'
 
 export type Item = typeof items.$inferSelect
 export type Recipe = typeof recipes.$inferSelect

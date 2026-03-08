@@ -6,7 +6,7 @@ export interface Search {
 
 // 検索項目を定義するための型
 export type SearchDefineEntry = {
-  label: string,
+  label: string
   items: string[]
 }
 
@@ -15,11 +15,9 @@ export interface SearchDefine {
   registry_id: SearchDefineEntry
 }
 
-
 // アイテム
-export interface ItemSearch extends Search {}
-export interface ItemSearchDefine extends SearchDefine {}
-
+export type ItemSearch = Search
+export type ItemSearchDefine = SearchDefine
 
 // レシピ
 export interface RecipeSearch extends Search {
@@ -31,7 +29,6 @@ export interface RecipeSearchDefine extends SearchDefine {
   input_id: SearchDefineEntry
   output_id: SearchDefineEntry
 }
-
 
 // タグ
 export interface TagSearch extends Search {

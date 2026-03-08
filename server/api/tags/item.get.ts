@@ -1,5 +1,5 @@
-import { tagsItem } from "~~/shared/schema";
+import { tagsItem } from '~~/shared/schema'
 
-export default eventHandler(async (event) => {
-    return await db.select().from(tagsItem)
+export default eventHandler(async (_) => {
+  return await db.select().from(tagsItem)
 })

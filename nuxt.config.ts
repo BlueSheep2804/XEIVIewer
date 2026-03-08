@@ -1,12 +1,12 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  components: [
-    "~/components/common",
-    "~/components"
-  ],
   modules: [
     '@nuxt/eslint',
     '@nuxt/ui'
+  ],
+  components: [
+    '~/components/common',
+    '~/components'
   ],
 
   devtools: {

@@ -1,40 +1,42 @@
 <script setup lang="ts">
-import Pagination from './Pagination.vue';
+import Pagination from './Pagination.vue'
 
-  const route = useRoute()
-  const router = useRouter()
+const route = useRoute()
+const router = useRouter()
 
-  type Props = {
-    entries: SearchDefine
-    total: number
-  }
+type Props = {
+  entries: SearchDefine
+  total: number
+}
 
-  const { entries, total } = defineProps<Props>()
-  const search = defineModel<Search>("search", { required: true })
-  const page = defineModel<number>("page", { required: true })
-  const itemsPerPage = defineModel<number>("items-per-page", { required: true })
+const { entries, total } = defineProps<Props>()
+const search = defineModel<Search>('search', { required: true })
+const page = defineModel<number>('page', { required: true })
+const itemsPerPage = defineModel<number>('items-per-page', { required: true })
 
-  watch(page, () => {
-    router.push({
-      query: {
-        ...route.query,
-        page: page.value
-      }
-    })
+watch(page, () => {
+  router.push({
+    query: {
+      ...route.query,
+      page: page.value
+    }
   })
+})
 </script>
 
 <template>
   <UPageSection>
-    <SearchComponent v-model:search="search" :entries="entries"/>
+    <SearchComponent v-model:search="search" :entries="entries" />
     <div class="flex">
       <UFormField label="表示数" class="grow">
-        <UInputNumber v-model="itemsPerPage" :step="10" class="w-32"/>
+        <UInputNumber v-model="itemsPerPage" :step="10" class="w-32" />
       </UFormField>
-      <p class="text-md font-medium">{{ total }}件</p>
+      <p class="text-md font-medium">
+        {{ total }}件
+      </p>
     </div>
-    <Pagination v-model:page="page" :items-per-page="itemsPerPage" :total="total"/>
-    <slot></slot>
-    <Pagination v-model:page="page" :items-per-page="itemsPerPage" :total="total"/>
+    <Pagination v-model:page="page" :items-per-page="itemsPerPage" :total="total" />
+    <slot />
+    <Pagination v-model:page="page" :items-per-page="itemsPerPage" :total="total" />
   </UPageSection>
 </template>

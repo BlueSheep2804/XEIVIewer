@@ -1,6 +1,6 @@
-import { items } from "~~/shared/schema";
-import { db } from "../utils/db";
+import { items } from '~~/shared/schema'
+import { db } from '../utils/db'
 
-export default eventHandler(async (event) => {
-    return await db.select().from(items)
+export default eventHandler(async (_) => {
+  return await db.select().from(items)
 })

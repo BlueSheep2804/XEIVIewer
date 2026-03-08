@@ -1,9 +1,9 @@
-import { and, eq } from "drizzle-orm";
-import { items } from "~~/shared/schema";
-import { db } from "../../utils/db";
+import { and, eq } from 'drizzle-orm'
+import { items } from '~~/shared/schema'
+import { db } from '../../utils/db'
 
 export default eventHandler(async (event) => {
-  const parsedResourceLocation = Identifier.parse(getRouterParam(event, "id") ?? "")
+  const parsedResourceLocation = Identifier.parse(getRouterParam(event, 'id') ?? '')
   const result = await db
     .select()
     .from(items)
@@ -14,8 +14,7 @@ export default eventHandler(async (event) => {
       )
     )
     .limit(1)
-    .then((value) => {
-      return value[0]
-    })
-    return result
+    .then(value => value[0])
+
+  return result
 })
