@@ -1,4 +1,6 @@
 <script setup lang="ts">
+  const route = useRoute()
+
   const { data } = await useFetch("/api/recipes", {
     server: false,
     lazy: true
@@ -13,6 +15,12 @@
       includeInList(value.input, search.value.input_id) &&
       includeInList(value.output, search.value.output_id)
     ))
+  })
+  const displayedRecipes = computed(() => {
+    return allRecipes.value?.slice(
+      (page.value - 1) * itemsPerPage.value,
+      page.value * itemsPerPage.value
+    )
   })
   const recipeLink = (namespace: string, path: string) => {
     return new Identifier(namespace, path).full
@@ -41,17 +49,20 @@
       items: []
     }
   }))
+
+  const page = ref(Number.parseInt(route.query?.page?.toString() ?? "1"))
+  const itemsPerPage = ref(10)
+  const total = computed(() => allRecipes.value?.length ?? 0)
 </script>
 
 <template>
-  <UPageSection>
-    <SearchComponent v-model:search="search" :entries="searchEntries"/>
+  <DatabaseView v-model:search="search" v-model:page="page" v-model:items-per-page="itemsPerPage" :entries="searchEntries" :total="total">
     <div class="grid gap-4 items-center grid-cols-1 lg:grid-cols-2">
-      <template v-for="recipe in allRecipes">
+      <template v-for="recipe in displayedRecipes" :key="recipe.id">
         <NuxtLink :to="`/recipe/${recipeLink(recipe.namespace, recipe.path)}`" class="h-fit">
           <RecipeView :recipe="recipe" :recipe-type="getRecipeType(recipe.type)"/>
         </NuxtLink>
       </template>
     </div>
-  </UPageSection>
+  </DatabaseView>
 </template>
