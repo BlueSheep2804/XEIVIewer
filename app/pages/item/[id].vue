@@ -11,48 +11,16 @@ const { data: itemData } = await useFetch(() => dataUrl, {
 <template>
   <div>
     <UPageSection v-if="itemData">
-      <ItemImage :item="itemId" class="min-w-16 max-w-32 lg:max-w-64 min-h-16 lg:h-32" />
+      <ItemImage :item="itemId" :show-link="false" class="min-w-8 max-w-24" />
       <h1 class="text-4xl font-bold">
         {{ itemData.descriptionId }}
       </h1>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3">
-        <UCard class="m-2">
-          <UIcon name="bi:geo-alt-fill" class="size-8" />
-          <h2 class="text-lg font-semibold">
-            アイテムID
-          </h2>
-          <p>{{ itemId.full }}</p>
-        </UCard>
-        <UCard class="m-2">
-          <UIcon name="bi:chat-square-text-fill" class="size-8" />
-          <h2 class="text-lg font-semibold">
-            翻訳キー
-          </h2>
-          <p>{{ itemData.descriptionId }}</p>
-        </UCard>
-        <UCard class="m-2">
-          <UIcon name="bi:gem" class="size-8" />
-          <h2 class="text-lg font-semibold">
-            レアリティ
-          </h2>
-          <p>{{ itemData.rarity }}</p>
-        </UCard>
-        <UCard class="m-2">
-          <UIcon name="bi:usb" class="size-8" />
-          <h2 class="text-lg font-semibold">
-            耐久値
-          </h2>
-          <p>{{ itemData.maxDamage }}</p>
-        </UCard>
-        <UCard class="m-2">
-          <UIcon name="bi:code-slash" class="size-8" />
-          <h2 class="text-lg font-semibold">
-            クラス名
-          </h2>
-          <p class="wrap-break-word">
-            {{ itemData.class }}
-          </p>
-        </UCard>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <ItemInfoCard icon="lucide:scroll-text" header="アイテムID" :value="itemId.full" />
+        <ItemInfoCard icon="lucide:message-square-text" header="翻訳キー" :value="itemData.descriptionId" />
+        <ItemInfoCard icon="lucide:gem" header="レアリティ" :value="itemData.rarity" />
+        <ItemInfoCard icon="lucide:axe" header="耐久値" :value="itemData.maxDamage" />
+        <ItemInfoCard icon="lucide:code-xml" header="クラス名" :value="itemData.class" />
       </div>
     </UPageSection>
   </div>
