@@ -77,6 +77,8 @@ const navigationItems = computed<NavigationMenuItem[]>(() => [
           variant="ghost"
         />
 
+        <MCLocaleSelect />
+
         <ULocaleSelect :model-value="locale" :locales="availableLocales" @update:model-value="setLocale($event)" />
       </template>
 
