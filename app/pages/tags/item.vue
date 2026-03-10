@@ -20,15 +20,15 @@ const displayedItemTags = computed(() => {
 const search: Ref<TagSearch> = ref({})
 const searchEntries: ComputedRef<TagSearchDefine> = computed(() => ({
   mod_id: {
-    label: 'ModID',
+    label: $t('tags.item.search.mod_id'),
     items: []
   },
   registry_id: {
-    label: 'タグID',
+    label: $t('tags.item.search.registry_id'),
     items: []
   },
   include_id: {
-    label: '登録されているアイテムのID',
+    label: $t('tags.item.search.include_id'),
     items: []
   }
 }))

@@ -1,0 +1,41 @@
+{
+  "common": {
+    "search": "Search",
+    "view_count": "View",
+    "results": "{result} Results"
+  },
+  "items": {
+    "title": "Items",
+    "search": {
+      "mod_id": "Mod ID",
+      "registry_id": "Item ID"
+    }
+  },
+  "item": {
+    "item_id": "Item ID",
+    "translation_key": "Translation key",
+    "rarity": "Rarity",
+    "durability": "Durability",
+    "class": "Java class"
+  },
+  "recipes": {
+    "title": "Recipes",
+    "search": {
+      "mod_id": "Mod ID",
+      "registry_id": "Recipe ID",
+      "input_id": "Ingredient",
+      "output_id": "Output"
+    }
+  },
+  "tags": {
+    "title": "Tags",
+    "item": {
+      "title": "Item",
+      "search": {
+        "mod_id": "Mod ID",
+        "registry_id": "Tag ID",
+        "include_id": "Registered item ID"
+      }
+    }
+  }
+}

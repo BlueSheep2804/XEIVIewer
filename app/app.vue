@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
+import { en, ja } from '@nuxt/ui/locale'
+
+const { locale, setLocale } = useI18n()
+
+const availableLocales = [en, ja]
 
 useHead({
   meta: [
@@ -9,7 +14,7 @@ useHead({
     { rel: 'icon', href: '/favicon.ico' }
   ],
   htmlAttrs: {
-    lang: 'en'
+    lang: locale
   }
 })
 
@@ -28,21 +33,21 @@ useSeoMeta({
 
 const navigationItems = computed<NavigationMenuItem[]>(() => [
   {
-    label: 'Items',
+    label: $t('items.title'),
     icon: 'bi:magic',
     to: '/items'
   },
   {
-    label: 'Recipes',
+    label: $t('recipes.title'),
     icon: 'bi:grid-3x3-gap-fill',
     to: '/recipes'
   },
   {
-    label: 'Tags',
+    label: $t('tags.title'),
     icon: 'bi:tags-fill',
     children: [
       {
-        label: 'Item',
+        label: $t('tags.item.title'),
         icon: 'bi:magic',
         to: '/tags/item'
       }
@@ -71,6 +76,8 @@ const navigationItems = computed<NavigationMenuItem[]>(() => [
           color="neutral"
           variant="ghost"
         />
+
+        <ULocaleSelect :model-value="locale" :locales="availableLocales" @update:model-value="setLocale($event)" />
       </template>
 
       <template #body>

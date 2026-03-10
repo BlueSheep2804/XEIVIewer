@@ -14,11 +14,11 @@ const search: Ref<ItemSearch> = ref({})
 
 const searchEntries: ComputedRef<ItemSearchDefine> = computed(() => ({
   mod_id: {
-    label: 'ModID',
+    label: $t('items.search.mod_id'),
     items: [...new Set(data.value?.map(value => value.namespace))]
   },
   registry_id: {
-    label: 'アイテムID',
+    label: $t('items.search.registry_id'),
     items: []
   }
 }))

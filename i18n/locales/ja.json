@@ -1,0 +1,41 @@
+{
+  "common": {
+    "search": "検索",
+    "view_count": "表示数",
+    "results": "{result}件"
+  },
+  "items": {
+    "title": "アイテム",
+    "search": {
+      "mod_id": "Mod ID",
+      "registry_id": "アイテムID"
+    }
+  },
+  "item": {
+    "item_id": "アイテムID",
+    "translation_key": "翻訳キー",
+    "rarity": "レアリティ",
+    "durability": "耐久値",
+    "class": "Javaクラス名"
+  },
+  "recipes": {
+    "title": "レシピ",
+    "search": {
+      "mod_id": "Mod ID",
+      "registry_id": "レシピID",
+      "input_id": "材料",
+      "output_id": "完成品"
+    }
+  },
+  "tags": {
+    "title": "タグ",
+    "item": {
+      "title": "アイテム",
+      "search": {
+        "mod_id": "Mod ID",
+        "registry_id": "タグID",
+        "include_id": "登録されているアイテムのID"
+      }
+    }
+  }
+}

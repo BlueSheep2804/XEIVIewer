@@ -28,11 +28,11 @@ watch(page, () => {
   <UPageSection>
     <SearchComponent v-model:search="search" :entries="entries" />
     <div class="flex">
-      <UFormField label="表示数" class="grow">
+      <UFormField :label="$t('common.view_count')" class="grow">
         <UInputNumber v-model="itemsPerPage" :step="10" class="w-32" />
       </UFormField>
       <p class="text-md font-medium">
-        {{ total }}件
+        {{ $t('common.results', { result: total }) }}
       </p>
     </div>
     <Pagination v-model:page="page" :items-per-page="itemsPerPage" :total="total" />

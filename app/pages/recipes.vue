@@ -33,19 +33,19 @@ const search: Ref<RecipeSearch> = ref({})
 
 const searchEntries: ComputedRef<RecipeSearchDefine> = computed(() => ({
   mod_id: {
-    label: 'ModID',
+    label: $t('recipes.search.mod_id'),
     items: []
   },
   registry_id: {
-    label: 'レシピID',
+    label: $t('recipes.search.registry_id'),
     items: []
   },
   input_id: {
-    label: '材料',
+    label: $t('recipes.search.input_id'),
     items: []
   },
   output_id: {
-    label: '完成品',
+    label: $t('recipes.search.output_id'),
     items: []
   }
 }))

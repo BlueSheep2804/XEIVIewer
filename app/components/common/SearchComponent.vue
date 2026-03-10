@@ -31,7 +31,7 @@ watch(route, updateSearchQuery)
 <template>
   <UCollapsible>
     <UButton
-      label="Search"
+      :label="$t('common.search')"
       trailing-icon="lucide:chevron-down"
       :ui="{
         trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200'
