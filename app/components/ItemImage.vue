@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { onKeyDown } from '@vueuse/core'
+
 type Props = {
   item: Identifier
   showLink?: boolean
@@ -6,9 +8,23 @@ type Props = {
 }
 const { item: identifier, showLink = true, override = {} } = defineProps<Props>()
 
+const router = useRouter()
+
 const isNone = computed(() => identifier.path === '')
 const imageUrl = computed(() => `/assets/items/${identifier.namespace}/${identifier.path}.png`)
 const linkUrl = computed(() => `/item/${identifier.full}`)
+
+onKeyDown('u', (_) => {
+  if (open.value) {
+    router.push(recipeInputUrl(identifier))
+  }
+}, { dedupe: true })
+
+onKeyDown('r', (_) => {
+  if (open.value) {
+    router.push(recipeOutputUrl(identifier))
+  }
+}, { dedupe: true })
 
 const { data: itemData, execute } = await useItem(identifier.full)
 
