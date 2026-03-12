@@ -2,25 +2,16 @@
 const route = useRoute()
 const itemId = ref(Identifier.parse(route.params.id))
 
-const { mcLang } = useMCLang()
+const { data: itemData, execute } = await useItem(itemId.value.full)
+await execute()
 
-const dataUrl = `/api/item/${itemId.value.full}`
-const { data: itemData } = await useFetch(() => dataUrl, {
-  server: false
-})
-
-const itemName = computed(() => {
-  if (typeof mcLang.value === 'undefined') {
-    return ''
-  }
-  return mcLang.value[itemData.value.descriptionId]
-})
+const itemName = computed(() => getItemName(itemData.value?.descriptionId))
 </script>
 
 <template>
   <div>
     <UPageSection v-if="itemData">
-      <ItemImage :item="itemId" :show-link="false" class="min-w-8 max-w-24" />
+      <ItemImage :item="itemId" :show-link="false" class="max-w-17" />
       <h1 class="text-4xl font-bold">
         {{ itemName }}
       </h1>

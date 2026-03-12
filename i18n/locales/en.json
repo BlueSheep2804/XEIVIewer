@@ -2,7 +2,9 @@
   "common": {
     "search": "Search",
     "view_count": "View",
-    "results": "{result} Results"
+    "results": "{result} Results",
+    "item_group": "Item group",
+    "tag_ingredient": "Any {tag}"
   },
   "items": {
     "title": "Items",

@@ -24,23 +24,42 @@ const getFirstItem = computed(() => {
   }
   return ingredientList.value[0]?.value ?? Identifier.parse('')
 })
-const isOnlySingleItem = computed(() => {
+const isMultipleItem = computed(() => {
   return ingredientList.value.length > 1 || ingredientList.value[0]?.isTag
 })
 const isOnlyTag = computed(() => {
   return tagList.length == 1 && typeof tagList[0] !== 'undefined'
+})
+const itemOverride = computed(() => {
+  let itemName: string
+  let itemId: string
+  if (isOnlyTag.value) {
+    itemName = $t('common.tag_ingredient', { tag: ingredientList.value[0]?.value.path })
+    itemId = `#${ingredientList.value[0]?.value.full}`
+  } else {
+    itemName = $t('common.item_group')
+    itemId = `${getFirstItem.value.full}, +${ingredientList.value.length - 1}`
+  }
+  return {
+    itemName,
+    itemId
+  }
 })
 
 const open = ref(false)
 </script>
 
 <template>
-  <div v-if="isOnlySingleItem" class="inline-flex">
+  <div v-if="isMultipleItem" class="inline-flex aspect-square">
     <UPopover v-model:open="open" arrow :ui="{ content: 'p-4' }">
       <template #anchor>
-        <a v-if="getFirstItem" href="#" class="block" @click.prevent="open = true">
-          <UChip inset color="success" size="3xl" class="block">
-            <ItemImage :item="getFirstItem" :show-link="false" />
+        <a v-if="getFirstItem" href="#" class="inline-block" @click.prevent="open = true">
+          <UChip inset color="success" size="3xl" class="inline-block">
+            <ItemImage
+              :item="getFirstItem"
+              :show-link="false"
+              :override="itemOverride"
+            />
           </UChip>
         </a>
       </template>
