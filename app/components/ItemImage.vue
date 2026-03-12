@@ -16,13 +16,13 @@ const linkUrl = computed(() => `/item/${identifier.full}`)
 
 onKeyDown('u', (_) => {
   if (open.value) {
-    router.push(recipeInputUrl(identifier))
+    router.push(getRecipeInputUrl(identifier))
   }
 }, { dedupe: true })
 
 onKeyDown('r', (_) => {
   if (open.value) {
-    router.push(recipeOutputUrl(identifier))
+    router.push(getRecipeOutputUrl(identifier))
   }
 }, { dedupe: true })
 

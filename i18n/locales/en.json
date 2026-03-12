@@ -14,6 +14,8 @@
     }
   },
   "item": {
+    "view_uses": "View Uses",
+    "view_recipes": "View Recipes",
     "item_id": "Item ID",
     "translation_key": "Translation key",
     "rarity": "Rarity",

@@ -1,7 +1,7 @@
-export function recipeInputUrl(input: Identifier) {
+export function getRecipeInputUrl(input: Identifier) {
   return `/recipes?input_id=${input.full}`
 }
 
-export function recipeOutputUrl(output: Identifier) {
+export function getRecipeOutputUrl(output: Identifier) {
   return `/recipes?output_id=${output.full}`
 }
