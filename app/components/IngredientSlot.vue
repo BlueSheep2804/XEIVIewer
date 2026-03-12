@@ -33,16 +33,21 @@ const isOnlyTag = computed(() => {
 const itemOverride = computed(() => {
   let itemName: string
   let itemId: string
+  let modId: string
   if (isOnlyTag.value) {
-    itemName = $t('common.tag_ingredient', { tag: ingredientList.value[0]?.value.path })
-    itemId = `#${ingredientList.value[0]?.value.full}`
+    const identifier = ingredientList.value[0]?.value
+    itemName = $t('common.tag_ingredient', { tag: identifier?.path ?? '' })
+    itemId = `#${identifier?.full ?? ''}`
+    modId = identifier?.namespace ?? ''
   } else {
     itemName = $t('common.item_group')
     itemId = `${getFirstItem.value.full}, +${ingredientList.value.length - 1}`
+    modId = getFirstItem.value.namespace
   }
   return {
     itemName,
-    itemId
+    itemId,
+    modId
   }
 })
 

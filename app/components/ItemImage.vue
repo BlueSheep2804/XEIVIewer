@@ -34,6 +34,12 @@ const itemId = computed(() => {
   }
   return identifier.full
 })
+const modId = computed(() => {
+  if (Object.keys(override).includes('modId')) {
+    return firstUppercase(override.modId ?? '')
+  }
+  return firstUppercase(identifier.namespace)
+})
 </script>
 
 <template>
@@ -51,6 +57,9 @@ const itemId = computed(() => {
         <p>{{ itemName }}</p>
         <p class="text-muted">
           {{ itemId }}
+        </p>
+        <p class="italic light:text-blue-800 dark:text-blue-400">
+          {{ modId }}
         </p>
       </div>
     </template>
