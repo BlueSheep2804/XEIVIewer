@@ -22,7 +22,7 @@ export default eventHandler((_) => {
     return {
       langs: fileList
     }
-  } catch (error: unknown) {
+  } catch {
     throw createError({
       status: 500,
       statusText: 'Unknown error'
