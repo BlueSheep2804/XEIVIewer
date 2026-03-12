@@ -22,6 +22,20 @@ const showPopover = () => {
   }
 }
 
+const anchor = ref({ x: 0, y: 0 })
+const reference = computed(() => ({
+  getBoundingClientRect: () =>
+    ({
+      width: 0,
+      height: 0,
+      left: anchor.value.x,
+      right: anchor.value.x,
+      top: anchor.value.y,
+      bottom: anchor.value.y,
+      ...anchor.value
+    } as DOMRect)
+}))
+
 const itemName = computed(() => {
   if (Object.keys(override).includes('itemName')) {
     return override.itemName
@@ -43,8 +57,20 @@ const modId = computed(() => {
 </script>
 
 <template>
-  <UPopover :open="open" :content="{ side: 'right' }">
-    <div class="inline-block aspect-square border-2 border-gray-700 bg-gray-400" @pointerenter="showPopover" @pointerleave="open = false">
+  <UPopover
+    :open="open"
+    :reference="reference"
+    :content="{ side: 'top', sideOffset: 24, updatePositionStrategy: 'always' }"
+  >
+    <div
+      class="inline-block aspect-square border-2 border-gray-700 bg-gray-400"
+      @pointerenter="showPopover"
+      @pointerleave="open = false"
+      @pointermove="(event: PointerEvent) => {
+        anchor.x = event.clientX
+        anchor.y = event.clientY
+      }"
+    >
       <NuxtLink v-if="showLink && !isNone" :to="linkUrl">
         <img :src="imageUrl">
       </NuxtLink>
