@@ -6,29 +6,47 @@ const { ingredient } = defineProps<Props>()
 
 const ingredientList = new Ingredient(ingredient)
 
-const tagList = await Promise.all(ingredientList.value.map((element) => {
+const tagFetchList = await Promise.all(ingredientList.value.map((element) => {
   if (element.isTag) {
-    const { data: tag } = useFetch(() => `/api/tag/item/${element.value.full}`, {
-      server: false
-    })
-    return tag
+    return useItemTag(element.value.full)
   } else {
     return null
   }
 }))
+tagFetchList.forEach(async value => await value?.execute())
+
+const tagList = tagFetchList
+  .map((value) => {
+    return value?.data ?? null
+  })
+
+function getTagEntryFromIndex(index: number): string[] {
+  const tagRef = tagList[index]
+  if (tagRef === null || typeof tagRef === 'undefined') return []
+  const tag = tagRef.value
+  if (tag === null || typeof tag !== 'object') return []
+
+  if ('entry' in tag) {
+    if (!Array.isArray(tag.entry)) return []
+    return tag.entry
+  }
+
+  return []
+}
 
 const getFirstItem = computed(() => {
   const first = ingredientList.value[0]
   if (first?.isTag ?? false) {
-    return Identifier.parse(tagList[0]?.value?.entry[0] ?? '')
+    return Identifier.parse(getTagEntryFromIndex(0)[0] ?? '')
   }
   return ingredientList.value[0]?.value ?? Identifier.parse('')
 })
+
 const isMultipleItem = computed(() => {
   return ingredientList.value.length > 1 || ingredientList.value[0]?.isTag
 })
 const isOnlyTag = computed(() => {
-  return tagList.length == 1 && typeof tagList[0] !== 'undefined'
+  return tagList.length == 1
 })
 const itemOverride = computed(() => {
   let itemName: string
@@ -69,13 +87,15 @@ const open = ref(false)
         </a>
       </template>
       <template #content>
-        <h6 v-if="isOnlyTag" class="text-lg">
+        <p v-if="isOnlyTag" class="text-lg mb-2">
           #{{ ingredientList.value[0]?.value.full }}
-        </h6>
+        </p>
         <div class="grid grid-cols-3 gap-2">
           <template v-for="(entry, index) in ingredientList.value" :key="entry.value">
-            <ItemImage v-if="!entry.isTag" :item="entry.value" />
-            <ItemImage v-for="tag in tagList[index]?.value?.entry" v-else :key="tag" :item="Identifier.parse(tag)" />
+            <ItemImage v-if="!entry.isTag" :item="entry.value" class="max-w-17" />
+            <template v-for="tag in getTagEntryFromIndex(index)" v-else :key="tag">
+              <ItemImage :item="Identifier.parse(tag)" class="max-w-17" />
+            </template>
           </template>
         </div>
       </template>
