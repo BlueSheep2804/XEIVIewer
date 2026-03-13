@@ -26,15 +26,17 @@ onKeyDown('r', (_) => {
   }
 }, { dedupe: true })
 
-const { data: itemData, execute } = await useItem(identifier.full)
+const itemData = ref()
 
 const open = ref(false)
 
-const showPopover = () => {
+const showPopover = async () => {
   if (isNone.value) return
   open.value = true
   if (typeof itemData.value === 'undefined') {
-    execute()
+    const { data, execute } = await useItem(identifier.full)
+    await execute()
+    itemData.value = data.value
   }
 }
 
@@ -53,13 +55,13 @@ const reference = computed(() => ({
 }))
 
 const itemName = computed(() => {
-  if (Object.keys(override).includes('itemName')) {
+  if ('itemName' in override) {
     return override.itemName
   }
   return getItemName(itemData.value?.descriptionId)
 })
 const itemId = computed(() => {
-  if (Object.keys(override).includes('itemId')) {
+  if ('itemId' in override) {
     return override.itemId
   }
   return identifier.full
