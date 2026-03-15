@@ -1,33 +1,7 @@
 <script setup lang="ts">
-const route = useRoute()
+import type { TagItem } from '~~/shared/tableTypes'
 
-const { data } = await useFetch('/api/recipes', {
-  server: false,
-  lazy: true
-})
-const { data: allRecipeTypes } = await useFetch('/api/recipe_types', {
-  server: false,
-  lazy: true
-})
-const allRecipes = computed(() => {
-  return data.value?.filter(value => (
-    commonSearch(search.value, value.namespace, value.path)
-    && includeInList(value.input, search.value.input_id)
-    && includeInList(value.output, search.value.output_id)
-  ))
-})
-const displayedRecipes = computed(() => {
-  return allRecipes.value?.slice(
-    (page.value - 1) * itemsPerPage.value,
-    page.value * itemsPerPage.value
-  )
-})
-const recipeLink = (namespace: string, path: string) => {
-  return new Identifier(namespace, path).full
-}
-const getRecipeType = (id: string): string => {
-  return allRecipeTypes.value?.filter(value => value.id === id)[0]?.catalyst[0] ?? ''
-}
+const route = useRoute()
 
 const search: Ref<RecipeSearch> = ref({})
 
@@ -49,6 +23,50 @@ const searchEntries: ComputedRef<RecipeSearchDefine> = computed(() => ({
     items: []
   }
 }))
+
+const { data: recipes } = await useFetch('/api/recipes', {
+  server: false,
+  lazy: true
+})
+const { data: allRecipeTypes } = await useFetch('/api/recipe_types', {
+  server: false,
+  lazy: true
+})
+
+const allRecipes = computed(() => {
+  return recipes.value?.filter((value) => {
+    const tempSearch = search.value
+    return (
+      commonSearch(tempSearch, value.namespace, value.path)
+      && includeInIngredient(value.input, [tempSearch.input_id ?? '', ...inputIncludeTags.value])
+      && includeInList(value.output, search.value.output_id)
+    )
+  })
+})
+const displayedRecipes = computed(() => {
+  return allRecipes.value?.slice(
+    (page.value - 1) * itemsPerPage.value,
+    page.value * itemsPerPage.value
+  )
+})
+
+const { data: inputTags, execute: inputTagsRefresh } = await useApi(
+  () => `/api/tags/item?include_id=${search.value.input_id}`,
+  () => `tags.item:${search.value.input_id}`
+)
+await inputTagsRefresh()
+
+const inputIncludeTags = computed((): string[] => {
+  const tags = inputTags.value as Record<keyof TagItem, string>[]
+  return tags.map(value => `#${value.namespace}:${value.path}`)
+})
+
+const recipeLink = (namespace: string, path: string) => {
+  return new Identifier(namespace, path).full
+}
+const getRecipeType = (id: string): string => {
+  return allRecipeTypes.value?.filter(value => value.id === id)[0]?.catalyst[0] ?? ''
+}
 
 const page = ref(Number.parseInt(route.query?.page?.toString() ?? '1'))
 const itemsPerPage = ref(10)
