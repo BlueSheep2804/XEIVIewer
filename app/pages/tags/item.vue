@@ -34,7 +34,7 @@ const searchEntries: ComputedRef<TagSearchDefine> = computed(() => ({
 }))
 
 const page = ref(Number.parseInt(route.query?.page?.toString() ?? '1'))
-const itemsPerPage = ref(10)
+const itemsPerPage = useItemsPerPage('tags_item', 10)
 const total = computed(() => itemTags.value?.length ?? 0)
 </script>
 

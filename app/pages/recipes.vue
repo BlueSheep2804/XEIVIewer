@@ -69,7 +69,7 @@ const getRecipeType = (id: string): string => {
 }
 
 const page = ref(Number.parseInt(route.query?.page?.toString() ?? '1'))
-const itemsPerPage = ref(10)
+const itemsPerPage = useItemsPerPage('recipes', 10)
 const total = computed(() => allRecipes.value?.length ?? 0)
 </script>
 

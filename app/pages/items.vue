@@ -32,7 +32,7 @@ const searchEntries: ComputedRef<ItemSearchDefine> = computed(() => ({
 }))
 
 const page = ref(Number.parseInt(route.query?.page?.toString() ?? '1'))
-const itemsPerPage = ref(24)
+const itemsPerPage = useItemsPerPage('items', 12)
 const total = computed(() => allItems.value?.length ?? 0)
 </script>
 
