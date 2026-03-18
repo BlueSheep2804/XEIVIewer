@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import Pagination from './Pagination.vue'
-
 const route = useRoute()
 const router = useRouter()
 
 type Props = {
   entries: SearchDefine
   total: number
+  itemsPerPageStep?: number
 }
 
-const { entries, total } = defineProps<Props>()
+const { entries, total, itemsPerPageStep = 10 } = defineProps<Props>()
 const search = defineModel<Search>('search', { required: true })
 const page = defineModel<number>('page', { required: true })
 const itemsPerPage = defineModel<number>('items-per-page', { required: true })
@@ -29,7 +28,7 @@ watch(page, () => {
     <SearchComponent v-model:search="search" :entries="entries" />
     <div class="flex">
       <UFormField :label="$t('common.view_count')" class="grow">
-        <UInputNumber v-model="itemsPerPage" :step="10" class="w-32" />
+        <UInputNumber v-model="itemsPerPage" :step="itemsPerPageStep" class="w-32" />
       </UFormField>
       <p class="text-md font-medium">
         {{ $t('common.results', { result: total }) }}
