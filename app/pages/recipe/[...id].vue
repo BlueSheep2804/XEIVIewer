@@ -16,7 +16,9 @@ const recipeType = computed(() => recipeData.value.recipe_type)
       <h1 class="text-4xl font-bold">
         {{ resourceLocation.full }}
       </h1>
-      <RecipeView :recipe="recipe" :recipe-type="recipeType" />
+      <div class="flex justify-center">
+        <RecipeView :recipe="recipe" :recipe-type="recipeType" />
+      </div>
     </UPageSection>
   </div>
 </template>

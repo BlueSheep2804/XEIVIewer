@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TagItem } from '~~/shared/tableTypes'
+import type { RecipeType, TagItem } from '~~/shared/tableTypes'
 
 const route = useRoute()
 
@@ -64,8 +64,8 @@ const inputIncludeTags = computed((): string[] => {
 const recipeLink = (namespace: string, path: string) => {
   return new Identifier(namespace, path).full
 }
-const getRecipeType = (id: string): string => {
-  return allRecipeTypes.value?.filter(value => value.id === id)[0]?.catalyst[0] ?? ''
+const getRecipeType = (id: string): RecipeType | undefined => {
+  return allRecipeTypes.value?.filter(value => value.id === id)[0]
 }
 
 const page = ref(Number.parseInt(route.query?.page?.toString() ?? '1'))
@@ -81,7 +81,7 @@ const total = computed(() => allRecipes.value?.length ?? 0)
     :entries="searchEntries"
     :total="total"
   >
-    <div class="grid gap-4 items-center grid-cols-1 lg:grid-cols-2">
+    <div class="grid gap-4 justify-items-center items-center grid-cols-1 lg:grid-cols-2">
       <template v-for="recipe in displayedRecipes" :key="recipe.id">
         <NuxtLink :to="`/recipe/${recipeLink(recipe.namespace, recipe.path)}`" class="h-fit">
           <RecipeView :recipe="recipe" :recipe-type="getRecipeType(recipe.type)" />

@@ -3,22 +3,18 @@ import type { Recipe, RecipeType } from '~~/shared/tableTypes'
 
 interface Props {
   recipe: Recipe
-  recipeType: RecipeType | string
+  recipeType?: RecipeType | undefined
 }
 const { recipe, recipeType } = defineProps<Props>()
 
 const getRecipeType = computed((): string => {
-  if (typeof recipeType === 'string') {
-    return recipeType
-  } else {
-    return recipeType.catalyst.join(',')
-  }
+  return recipeType?.catalyst?.join(',') ?? ''
 })
 </script>
 
 <template>
-  <div class="flex items-center p-4 rounded-lg border-2 border-gray-700">
-    <IngredientSlot v-if="recipeType" :ingredient="getRecipeType" class="mr-8" />
+  <div class="flex items-center max-w-fit p-4 rounded-lg border-2 border-gray-700">
+    <IngredientSlot v-if="getRecipeType" :ingredient="getRecipeType" class="mr-8" />
     <div class="grid grid-cols-3">
       <template v-for="value in recipe.input" :key="value">
         <IngredientSlot :ingredient="value" />
