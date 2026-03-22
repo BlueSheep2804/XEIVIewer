@@ -1,32 +1,42 @@
 <script setup lang="ts">
 import { onKeyDown } from '@vueuse/core'
+import type { Item } from '~~/shared/tableTypes'
 
 type Props = {
-  item: Identifier
+  itemId?: Identifier
+  item?: Item
   showLink?: boolean
   override?: Override
 }
-const { item: identifier, showLink = true, override = {} } = defineProps<Props>()
+const { itemId, item, showLink = true, override = {} } = defineProps<Props>()
+
+const identifier = computed(() => {
+  if (typeof itemId === 'undefined') {
+    return new Identifier(item?.namespace ?? '', item?.name ?? '')
+  } else {
+    return itemId
+  }
+})
 
 const router = useRouter()
 
-const isNone = computed(() => identifier.path === '')
-const imageUrl = computed(() => `/assets/items/${identifier.namespace}/${identifier.path}.png`)
-const linkUrl = computed(() => `/item/${identifier.full}`)
+const isNone = computed(() => identifier.value.path === '')
+const imageUrl = computed(() => `/assets/items/${identifier.value.namespace}/${identifier.value.path}.png`)
+const linkUrl = computed(() => `/item/${identifier.value.full}`)
 
 onKeyDown('u', (_) => {
   if (open.value) {
-    router.push(getRecipeInputUrl(identifier))
+    router.push(getRecipeInputUrl(identifier.value))
   }
 }, { dedupe: true })
 
 onKeyDown('r', (_) => {
   if (open.value) {
-    router.push(getRecipeOutputUrl(identifier))
+    router.push(getRecipeOutputUrl(identifier.value))
   }
 }, { dedupe: true })
 
-const itemData = ref()
+const itemData = ref(item)
 
 const open = ref(false)
 
@@ -34,9 +44,9 @@ const showPopover = async () => {
   if (isNone.value) return
   open.value = true
   if (typeof itemData.value === 'undefined') {
-    const { data, execute } = await useItem(identifier.full)
+    const { data, execute } = await useItem(identifier.value.full)
     await execute()
-    itemData.value = data.value
+    itemData.value = data.value as Item
   }
 }
 
@@ -54,23 +64,23 @@ const reference = computed(() => ({
     } as DOMRect)
 }))
 
-const itemName = computed(() => {
+const tooltipItemName = computed(() => {
   if ('itemName' in override) {
     return override.itemName
   }
   return getItemName(itemData.value?.descriptionId)
 })
-const itemId = computed(() => {
+const toolTipItemId = computed(() => {
   if ('itemId' in override) {
     return override.itemId
   }
-  return identifier.full
+  return identifier.value.full
 })
-const modId = computed(() => {
+const toolTipModId = computed(() => {
   if (Object.keys(override).includes('modId')) {
     return firstUppercase(override.modId ?? '')
   }
-  return firstUppercase(identifier.namespace)
+  return firstUppercase(identifier.value.namespace)
 })
 </script>
 
@@ -98,12 +108,12 @@ const modId = computed(() => {
 
     <template #content>
       <div class="p-2">
-        <p>{{ itemName }}</p>
+        <p>{{ tooltipItemName }}</p>
         <p class="text-muted">
-          {{ itemId }}
+          {{ toolTipItemId }}
         </p>
         <p class="italic light:text-blue-800 dark:text-blue-400">
-          {{ modId }}
+          {{ toolTipModId }}
         </p>
       </div>
     </template>

@@ -47,7 +47,7 @@ const total = computed(() => allItems.value?.length ?? 0)
   >
     <div class="grid justify-items-center gap-4 grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12">
       <template v-for="item in displayedItems" :key="item.id">
-        <ItemImage :item="new Identifier(item.namespace, item.name)" />
+        <ItemImage :item="item" />
       </template>
     </div>
   </DatabaseView>

@@ -79,7 +79,7 @@ const open = ref(false)
         <a v-if="getFirstItem" href="#" class="inline-block" @click.prevent="open = true">
           <UChip inset color="success" size="3xl" class="inline-block">
             <ItemImage
-              :item="getFirstItem"
+              :item-id="getFirstItem"
               :show-link="false"
               :override="itemOverride"
             />
@@ -92,9 +92,9 @@ const open = ref(false)
         </p>
         <div class="grid grid-cols-3 gap-2">
           <template v-for="(entry, index) in ingredientList.value" :key="entry.value">
-            <ItemImage v-if="!entry.isTag" :item="entry.value" class="max-w-17" />
+            <ItemImage v-if="!entry.isTag" :item-id="entry.value" class="max-w-17" />
             <template v-for="tag in getTagEntryFromIndex(index)" v-else :key="tag">
-              <ItemImage :item="Identifier.parse(tag)" class="max-w-17" />
+              <ItemImage :item-id="Identifier.parse(tag)" class="max-w-17" />
             </template>
           </template>
         </div>
@@ -102,6 +102,6 @@ const open = ref(false)
     </UPopover>
   </div>
   <div v-else class="inline-flex aspect-square">
-    <ItemImage :item="getFirstItem" />
+    <ItemImage :item-id="getFirstItem" />
   </div>
 </template>

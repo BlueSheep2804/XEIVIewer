@@ -56,7 +56,7 @@ const total = computed(() => itemTags.value?.length ?? 0)
           </template>
           <div class="grid gap-2 place-items-center grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-4 xl:grid-cols-6">
             <template v-for="item in tag.entry" :key="item">
-              <ItemImage :item="Identifier.parse(item)" />
+              <ItemImage :item-id="Identifier.parse(item)" />
             </template>
           </div>
         </UCard>

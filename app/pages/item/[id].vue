@@ -25,7 +25,7 @@ const itemName = computed(() => getItemName(itemData.value?.descriptionId))
 <template>
   <div>
     <UPageSection v-if="itemData">
-      <ItemImage :item="itemId" :show-link="false" class="max-w-17" />
+      <ItemImage :item="itemData" :show-link="false" class="max-w-17" />
       <h1 class="text-4xl font-bold">
         {{ itemName }}
       </h1>
