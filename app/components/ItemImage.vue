@@ -17,6 +17,7 @@ const identifier = computed(() => {
     return itemId
   }
 })
+const modDisplayName: Ref<string | undefined> = ref()
 
 const router = useRouter()
 
@@ -48,6 +49,9 @@ const showPopover = async () => {
     await execute()
     itemData.value = data.value as Item
   }
+  if (typeof modDisplayName.value === 'undefined') {
+    modDisplayName.value = await getModName(identifier.value.namespace)
+  }
 }
 
 const anchor = ref({ x: 0, y: 0 })
@@ -77,10 +81,10 @@ const toolTipItemId = computed(() => {
   return identifier.value.full
 })
 const toolTipModId = computed(() => {
-  if (Object.keys(override).includes('modId')) {
-    return firstUppercase(override.modId ?? '')
+  if ('modId' in override && typeof override.modId === 'string') {
+    return firstUppercase(override.modId)
   }
-  return firstUppercase(identifier.value.namespace)
+  return modDisplayName.value ?? firstUppercase(identifier.value.namespace)
 })
 </script>
 
