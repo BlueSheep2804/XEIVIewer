@@ -52,6 +52,11 @@ const navigationItems = computed<NavigationMenuItem[]>(() => [
         to: '/tags/item'
       }
     ]
+  },
+  {
+    label: $t('mods.title'),
+    icon: 'lucide:coffee',
+    to: '/mods'
   }
 ])
 </script>

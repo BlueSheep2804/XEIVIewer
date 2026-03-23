@@ -41,5 +41,10 @@
         "include_id": "登録されているアイテムのID"
       }
     }
+  },
+  "mods": {
+    "title": "Mods",
+    "authors": "製作者",
+    "license": "ライセンス"
   }
 }

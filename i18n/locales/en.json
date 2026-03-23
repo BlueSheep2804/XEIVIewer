@@ -41,5 +41,10 @@
         "include_id": "Registered item ID"
       }
     }
+  },
+  "mods": {
+    "title": "Mods",
+    "authors": "Authors",
+    "license": "License"
   }
 }
