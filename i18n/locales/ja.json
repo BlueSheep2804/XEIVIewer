@@ -44,6 +44,11 @@
   },
   "mods": {
     "title": "Mods",
+    "search": {
+      "mod_id": "Mod ID",
+      "authors": "製作者",
+      "license": "ライセンス"
+    },
     "authors": "製作者",
     "license": "ライセンス"
   }

@@ -44,6 +44,11 @@
   },
   "mods": {
     "title": "Mods",
+    "search": {
+      "mod_id": "Mod ID",
+      "authors": "Authors",
+      "license": "License"
+    },
     "authors": "Authors",
     "license": "License"
   }
