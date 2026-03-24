@@ -34,21 +34,21 @@ useSeoMeta({
 const navigationItems = computed<NavigationMenuItem[]>(() => [
   {
     label: $t('items.title'),
-    icon: 'bi:magic',
+    icon: 'lucide:wand',
     to: '/items'
   },
   {
     label: $t('recipes.title'),
-    icon: 'bi:grid-3x3-gap-fill',
+    icon: 'lucide:grid-3x3',
     to: '/recipes'
   },
   {
     label: $t('tags.title'),
-    icon: 'bi:tags-fill',
+    icon: 'lucide:tags',
     children: [
       {
         label: $t('tags.item.title'),
-        icon: 'bi:magic',
+        icon: 'lucide:wand',
         to: '/tags/item'
       }
     ]
