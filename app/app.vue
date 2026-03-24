@@ -18,8 +18,8 @@ useHead({
   }
 })
 
-const title = 'Nuxt Starter Template'
-const description = 'A production-ready starter template powered by Nuxt UI. Build beautiful, accessible, and performant applications in minutes, not hours.'
+const title = 'XEIEXporter'
+const description = 'Web Recipe Viewer for Minecraft'
 
 useSeoMeta({
   title,
@@ -73,15 +73,6 @@ const navigationItems = computed<NavigationMenuItem[]>(() => [
       <template #right>
         <UColorModeButton />
 
-        <UButton
-          to="https://github.com/nuxt-ui-templates/starter"
-          target="_blank"
-          icon="i-simple-icons-github"
-          aria-label="GitHub"
-          color="neutral"
-          variant="ghost"
-        />
-
         <MCLocaleSelect />
 
         <ULocaleSelect :model-value="locale" :locales="availableLocales" @update:model-value="setLocale($event)" />
@@ -107,7 +98,7 @@ const navigationItems = computed<NavigationMenuItem[]>(() => [
 
       <template #right>
         <UButton
-          to="https://github.com/nuxt-ui-templates/starter"
+          to="https://github.com/BlueSheep2804/XEIVIewer"
           target="_blank"
           icon="i-simple-icons-github"
           aria-label="GitHub"
