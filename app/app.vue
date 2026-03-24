@@ -96,6 +96,16 @@ const navigationItems = computed<NavigationMenuItem[]>(() => [
         </p>
       </template>
 
+      <div class="p-4 space-y-4">
+        <p class="text-sm text-muted max-w-120 wrap-break-word">
+          {{ $t('common.disclaminer.minecraft') }}
+        </p>
+
+        <p class="text-sm text-muted max-w-120 wrap-break-word">
+          {{ $t('common.disclaminer.mod_community') }}
+        </p>
+      </div>
+
       <template #right>
         <UButton
           to="https://github.com/BlueSheep2804/XEIVIewer"

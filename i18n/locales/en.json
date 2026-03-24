@@ -1,5 +1,9 @@
 {
   "common": {
+    "disclaminer": {
+      "minecraft": "NOT AN OFFICIAL MINECRAFT SERVICE. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT",
+      "mod_community": "The Mod and Modpack images/assets featured on this site are not officially endorsed by their respective creators. All copyrights and intellectual property rights belong to the original authors."
+    },
     "search": "Search",
     "view_count": "View",
     "results": "{result} Results",

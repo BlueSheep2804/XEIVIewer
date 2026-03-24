@@ -1,5 +1,9 @@
 {
   "common": {
+    "disclaminer": {
+      "minecraft": "Minecraft の公式のサービスではありません。Mojang または Microsoft から承認を受けておらず、それとの関連性もありません。",
+      "mod_community": "本サイトで使用されているMod・Modパックの画像・アセットは、それぞれの製作者から直接の承認を得ているものではありません。これらの著作権および知的財産権は各製作者に帰属します。"
+    },
     "search": "検索",
     "view_count": "表示数",
     "results": "{result}件",
