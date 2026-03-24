@@ -1,7 +1,7 @@
 import { and, eq } from 'drizzle-orm'
 import { tagsItem } from '~~/shared/schema'
 
-export default eventHandler(async (event) => {
+export default cachedEventHandler(async (event) => {
   const parsedResourceLocation = Identifier.parse(getRouterParam(event, 'id') ?? '')
   const result = await db
     .select()
@@ -16,4 +16,8 @@ export default eventHandler(async (event) => {
     .then(value => value[0])
 
   return result
+}, {
+  maxAge: 60 * 60,
+  name: 'tag_item',
+  getKey: event => getRouterParam(event, 'id')?.replace(':', '_').replaceAll('/', '_') ?? ''
 })

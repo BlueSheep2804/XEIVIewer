@@ -2,7 +2,7 @@ import { and, eq } from 'drizzle-orm'
 import { items } from '~~/shared/schema'
 import { db } from '../../utils/db'
 
-export default eventHandler(async (event) => {
+export default cachedEventHandler(async (event) => {
   const parsedResourceLocation = Identifier.parse(getRouterParam(event, 'id') ?? '')
   const result = await db
     .select()
@@ -17,4 +17,8 @@ export default eventHandler(async (event) => {
     .then(value => value[0])
 
   return result
+}, {
+  maxAge: 60 * 60,
+  name: 'item',
+  getKey: event => getRouterParam(event, 'id')?.replace(':', '_') ?? ''
 })
