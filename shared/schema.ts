@@ -1,7 +1,37 @@
-import { pgTable, text, serial, integer } from "drizzle-orm/pg-core"
+import { pgTable, serial, text, integer } from "drizzle-orm/pg-core"
 import { sql } from "drizzle-orm"
 
 
+
+export const tagsItem = pgTable("tags_item", {
+	id: serial().primaryKey().notNull(),
+	namespace: text().notNull(),
+	path: text().notNull(),
+	entry: text().array().notNull(),
+});
+
+export const tagsFluid = pgTable("tags_fluid", {
+	id: serial().primaryKey().notNull(),
+	namespace: text().notNull(),
+	path: text().notNull(),
+	entry: text().array().notNull(),
+});
+
+export const recipes = pgTable("recipes", {
+	id: serial().primaryKey().notNull(),
+	namespace: text().notNull(),
+	path: text().notNull(),
+	type: text().notNull(),
+	input: text().array().notNull(),
+	output: text().array().notNull(),
+});
+
+export const recipeType = pgTable("recipe_type", {
+	id: text().primaryKey().notNull(),
+	catalyst: text().array().notNull(),
+	inputSize: integer().notNull(),
+	outputSize: integer().notNull(),
+});
 
 export const mods = pgTable("mods", {
 	modId: text().primaryKey().notNull(),
@@ -24,25 +54,10 @@ export const items = pgTable("items", {
 	class: text().notNull(),
 });
 
-export const tagsItem = pgTable("tags_item", {
+export const fluids = pgTable("fluids", {
 	id: serial().primaryKey().notNull(),
 	namespace: text().notNull(),
-	path: text().notNull(),
-	entry: text().array().notNull(),
-});
-
-export const recipes = pgTable("recipes", {
-	id: serial().primaryKey().notNull(),
-	namespace: text().notNull(),
-	path: text().notNull(),
-	type: text().notNull(),
-	input: text().array().notNull(),
-	output: text().array().notNull(),
-});
-
-export const recipeType = pgTable("recipe_type", {
-	id: text().primaryKey().notNull(),
-	catalyst: text().array().notNull(),
-	inputSize: integer().notNull(),
-	outputSize: integer().notNull(),
+	name: text().notNull(),
+	descriptionId: text().notNull(),
+	temperature: integer().notNull(),
 });

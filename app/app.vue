@@ -38,6 +38,11 @@ const navigationItems = computed<NavigationMenuItem[]>(() => [
     to: '/items'
   },
   {
+    label: $t('fluids.title'),
+    icon: 'lucide:paint-bucket',
+    to: '/fluids'
+  },
+  {
     label: $t('recipes.title'),
     icon: 'lucide:grid-3x3',
     to: '/recipes'

@@ -8,7 +8,9 @@
     "view_count": "View",
     "results": "{result} Results",
     "item_group": "Item group",
-    "tag_ingredient": "Any {tag}"
+    "tag_ingredient": "Any {tag}",
+    "view_uses": "View Uses",
+    "view_recipes": "View Recipes"
   },
   "items": {
     "title": "Items",
@@ -18,13 +20,22 @@
     }
   },
   "item": {
-    "view_uses": "View Uses",
-    "view_recipes": "View Recipes",
     "item_id": "Item ID",
     "translation_key": "Translation key",
     "rarity": "Rarity",
     "durability": "Durability",
     "class": "Java class"
+  },
+  "fluids": {
+    "title": "Fluids",
+    "search": {
+
+    }
+  },
+  "fluid": {
+    "fluid_id": "Fluid ID",
+    "translation_key": "Translation key",
+    "temperature": "Temperature"
   },
   "recipes": {
     "title": "Recipes",

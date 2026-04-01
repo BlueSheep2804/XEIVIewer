@@ -19,7 +19,7 @@ onKeyDown('u', (_) => {
 const { data: itemData, execute } = await useItem(itemId.value.full)
 await execute()
 
-const itemName = computed(() => getItemName(itemData.value?.descriptionId))
+const itemName = computed(() => getEntryName(itemData.value?.descriptionId))
 </script>
 
 <template>
@@ -32,19 +32,19 @@ const itemName = computed(() => getItemName(itemData.value?.descriptionId))
       <div class="flex gap-4 flex-wrap">
         <UButton icon="lucide:scan-search" size="xl" :to="recipeOutputUrl">
           <UKbd>R</UKbd>
-          {{ $t('item.view_recipes') }}
+          {{ $t('common.view_recipes') }}
         </UButton>
         <UButton icon="lucide:package-search" size="xl" :to="recipeInputUrl">
           <UKbd>U</UKbd>
-          {{ $t('item.view_uses') }}
+          {{ $t('common.view_uses') }}
         </UButton>
       </div>
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <ItemInfoCard icon="lucide:scroll-text" :header="$t('item.item_id')" :value="itemId.full" />
-        <ItemInfoCard icon="lucide:message-square-text" :header="$t('item.translation_key')" :value="itemData.descriptionId" />
-        <ItemInfoCard icon="lucide:gem" :header="$t('item.rarity')" :value="itemData.rarity" />
-        <ItemInfoCard icon="lucide:axe" :header="$t('item.durability')" :value="itemData.maxDamage" />
-        <ItemInfoCard icon="lucide:code-xml" :header="$t('item.class')" :value="itemData.class" />
+        <EntryInfoCard icon="lucide:scroll-text" :header="$t('item.item_id')" :value="itemId.full" />
+        <EntryInfoCard icon="lucide:message-square-text" :header="$t('item.translation_key')" :value="itemData.descriptionId" />
+        <EntryInfoCard icon="lucide:gem" :header="$t('item.rarity')" :value="itemData.rarity" />
+        <EntryInfoCard icon="lucide:axe" :header="$t('item.durability')" :value="itemData.maxDamage" />
+        <EntryInfoCard icon="lucide:code-xml" :header="$t('item.class')" :value="itemData.class" />
       </div>
     </UPageSection>
   </div>

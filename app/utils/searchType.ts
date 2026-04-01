@@ -27,6 +27,10 @@ export interface CommonSearchDefine extends SearchDefine {
 export type ItemSearch = CommonSearch
 export type ItemSearchDefine = CommonSearchDefine
 
+// 液体
+export type FluidSearch = CommonSearch
+export type FluidSearchDefine = CommonSearchDefine
+
 // レシピ
 export interface RecipeSearch extends CommonSearch {
   input_id?: string

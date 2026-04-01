@@ -8,7 +8,9 @@
     "view_count": "表示数",
     "results": "{result}件",
     "item_group": "アイテムグループ",
-    "tag_ingredient": "{tag}のいずれか"
+    "tag_ingredient": "{tag}のいずれか",
+    "view_uses": "用途を表示",
+    "view_recipes": "レシピを表示"
   },
   "items": {
     "title": "アイテム",
@@ -18,13 +20,23 @@
     }
   },
   "item": {
-    "view_uses": "用途を表示",
-    "view_recipes": "レシピを表示",
     "item_id": "アイテムID",
     "translation_key": "翻訳キー",
     "rarity": "レアリティ",
     "durability": "耐久値",
     "class": "Javaクラス名"
+  },
+  "fluids": {
+    "title": "液体",
+    "search": {
+      "mod_id": "Mod ID",
+      "registry_id": "液体ID"
+    }
+  },
+  "fluid": {
+    "fluid_id": "液体ID",
+    "translation_key": "翻訳キー",
+    "temperature": "温度"
   },
   "recipes": {
     "title": "レシピ",
