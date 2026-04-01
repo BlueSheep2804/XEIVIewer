@@ -55,6 +55,14 @@
         "registry_id": "Tag ID",
         "include_id": "Registered item ID"
       }
+    },
+    "fluid": {
+      "title": "Fluid",
+      "search": {
+        "mod_id": "Mod ID",
+        "registry_id": "Tag ID",
+        "include_id": "Registered fluid ID"
+      }
     }
   },
   "mods": {

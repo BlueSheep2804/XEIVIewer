@@ -56,6 +56,14 @@
         "registry_id": "タグID",
         "include_id": "登録されているアイテムのID"
       }
+    },
+    "fluid": {
+      "title": "液体",
+      "search": {
+        "mod_id": "Mod ID",
+        "registry_id": "タグID",
+        "include_id": "登録されている液体のID"
+      }
     }
   },
   "mods": {

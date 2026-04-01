@@ -55,6 +55,11 @@ const navigationItems = computed<NavigationMenuItem[]>(() => [
         label: $t('tags.item.title'),
         icon: 'lucide:wand',
         to: '/tags/item'
+      },
+      {
+        label: $t('tags.fluid.title'),
+        icon: 'lucide:paint-bucket',
+        to: '/tags/fluid'
       }
     ]
   },
