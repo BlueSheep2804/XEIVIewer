@@ -52,7 +52,6 @@ watch(route, updateSearchQuery)
               <UInput v-else v-model="search[index]" @change="updateUrlQuery">
                 <template v-if="search[index]?.length" #trailing>
                   <UButton
-                    icon="bi:x-circle"
                     variant="link"
                     color="neutral"
                     @click="search[index] = '';updateUrlQuery()"

@@ -13,7 +13,7 @@ const getRecipeType = computed((): string => {
 
 const inputClass = computed(() => {
   const column = Math.ceil(Math.sqrt(recipe.input.length))
-  if (column < 2) {
+  if (column < 3) {
     return 'grid-flow-col'
   } else {
     return 'grid-cols-' + column
@@ -21,7 +21,7 @@ const inputClass = computed(() => {
 })
 const outputClass = computed(() => {
   const column = Math.ceil(Math.sqrt(recipe.output.length))
-  if (column < 2) {
+  if (column < 3) {
     return 'grid-flow-col'
   } else {
     return 'grid-cols-' + column
