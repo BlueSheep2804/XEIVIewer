@@ -4,6 +4,7 @@
       "minecraft": "NOT AN OFFICIAL MINECRAFT SERVICE. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT",
       "mod_community": "The Mod and Modpack images/assets featured on this site are not officially endorsed by their respective creators. All copyrights and intellectual property rights belong to the original authors."
     },
+    "all": "All",
     "search": "Search",
     "view_count": "View",
     "results": "{result} Results",
@@ -44,7 +45,8 @@
       "mod_id": "Mod ID",
       "registry_id": "Recipe ID",
       "input_id": "Ingredient",
-      "output_id": "Output"
+      "output_id": "Output",
+      "recipe_type": "Recipe Type"
     }
   },
   "tags": {

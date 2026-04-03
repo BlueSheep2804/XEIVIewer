@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import type { SelectItem } from '@nuxt/ui'
 import type { RecipeType, TagItem } from '~~/shared/tableTypes'
 
 const route = useRoute()
+const { data: mods } = await useMods()
 
 const search: Ref<RecipeSearch> = ref({})
 
@@ -21,8 +23,46 @@ const searchEntries: ComputedRef<RecipeSearchDefine> = computed(() => ({
   output_id: {
     label: $t('recipes.search.output_id'),
     items: []
+  },
+  recipe_type: {
+    label: $t('recipes.search.recipe_type'),
+    items: recipeTypeChoices.value,
+    disableSearch: true
   }
 }))
+
+const recipeTypeChoices = computed(() => {
+  const recipeTypes: SelectItem[] = []
+  const registeredMods: string[] = []
+  allRecipeTypes.value?.forEach((recipeType) => {
+    const identifier = Identifier.parse(recipeType.id)
+    const modId = identifier.namespace
+    if (!registeredMods.includes(modId)) {
+      registeredMods.push(modId)
+      recipeTypes.push(
+        {
+          type: 'separator'
+        },
+        {
+          label: getModNameByObject(modId, mods),
+          type: 'label'
+        }
+      )
+    }
+
+    recipeTypes.push({
+      label: identifier.path,
+      value: recipeType.id
+    })
+  })
+  return [
+    {
+      label: $t('common.all'),
+      value: 'all'
+    },
+    ...recipeTypes
+  ]
+})
 
 const { data: recipes } = await useFetch('/api/recipes', {
   server: false,
@@ -34,12 +74,13 @@ const { data: allRecipeTypes } = await useFetch('/api/recipe_types', {
 })
 
 const allRecipes = computed(() => {
-  return recipes.value?.filter((value) => {
+  return recipes.value?.filter((recipe) => {
     const tempSearch = search.value
     return (
-      commonSearch(tempSearch, value.namespace, value.path)
-      && includeInIngredient(value.input, [tempSearch.input_id ?? '', ...inputIncludeTags.value])
-      && includeInIngredient(value.output, [tempSearch.output_id ?? ''])
+      commonSearch(tempSearch, recipe.namespace, recipe.path)
+      && includeInIngredient(recipe.input, [tempSearch.input_id ?? '', ...inputIncludeTags.value])
+      && includeInIngredient(recipe.output, [tempSearch.output_id ?? ''])
+      && (recipe.type === tempSearch.recipe_type || 'all' === (tempSearch.recipe_type ?? 'all'))
     )
   })
 })

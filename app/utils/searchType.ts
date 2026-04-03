@@ -1,3 +1,5 @@
+import type { SelectItem } from '@nuxt/ui'
+
 // 実際に受け渡しする検索データ型
 export interface Search {
   [key: string]: string | undefined
@@ -11,7 +13,8 @@ export interface CommonSearch extends Search {
 // 検索項目を定義するための型
 export type SearchDefineEntry = {
   label: string
-  items: string[]
+  items: (string | SelectItem)[]
+  disableSearch?: boolean
 }
 
 export interface SearchDefine {
@@ -35,11 +38,13 @@ export type FluidSearchDefine = CommonSearchDefine
 export interface RecipeSearch extends CommonSearch {
   input_id?: string
   output_id?: string
+  recipe_type?: string
 }
 
 export interface RecipeSearchDefine extends CommonSearchDefine {
   input_id: SearchDefineEntry
   output_id: SearchDefineEntry
+  recipe_type: SearchDefineEntry
 }
 
 // タグ

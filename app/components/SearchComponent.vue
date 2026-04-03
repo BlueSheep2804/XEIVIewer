@@ -42,14 +42,29 @@ watch(route, updateSearchQuery)
         <div class="mt-2 p-4 sm:w-lg bg-elevated rounded-lg grid gap-4 grid-cols-1 sm:grid-cols-2">
           <template v-for="(entry, index) in entries" :key="entry.label">
             <UFormField :label="entry.label">
-              <UInputMenu
-                v-if="entry.items.length"
+              <template v-if="entry.items.length > 0">
+                <USelect
+                  v-if="entry.disableSearch"
+                  v-model="search[index]"
+                  :items="entry.items"
+                  class="w-full"
+                  @change="updateUrlQuery"
+                />
+                <UInputMenu
+                  v-else
+                  v-model="search[index]"
+                  :items="entry.items"
+                  clear
+                  class="w-full"
+                  @change="updateUrlQuery"
+                />
+              </template>
+              <UInput
+                v-else
                 v-model="search[index]"
-                :items="entry.items"
-                clear
+                class="w-full"
                 @change="updateUrlQuery"
-              />
-              <UInput v-else v-model="search[index]" @change="updateUrlQuery">
+              >
                 <template v-if="search[index]?.length" #trailing>
                   <UButton
                     variant="link"
