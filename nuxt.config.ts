@@ -7,6 +7,8 @@ export default defineNuxtConfig({
   ],
   components: [
     '~/components/common',
+    '~/components/entry',
+    '~/components/recipe',
     '~/components'
   ],
 
