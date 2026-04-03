@@ -29,7 +29,8 @@
   "fluids": {
     "title": "Fluids",
     "search": {
-
+      "mod_id": "Mod ID",
+      "registry_id": "Fluid ID"
     }
   },
   "fluid": {
