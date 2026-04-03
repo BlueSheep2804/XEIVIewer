@@ -14,16 +14,6 @@ export function includeInIngredient(ingredients: string[], search: string[] | un
   return typeof result === 'string'
 }
 
-export function includeInList(list: string[], search: string | undefined): boolean {
-  if (typeof search === 'undefined') return true
-  if (search === '') return true
-
-  const result = list.find((value) => {
-    return parseEntry(value).identifier.full === search
-  })
-  return typeof result === 'string'
-}
-
 export function commonSearch(search: Search, namespace: string, path: string) {
   return (
     namespace.includes(search.mod_id ?? '')
