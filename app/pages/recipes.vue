@@ -39,7 +39,7 @@ const allRecipes = computed(() => {
     return (
       commonSearch(tempSearch, value.namespace, value.path)
       && includeInIngredient(value.input, [tempSearch.input_id ?? '', ...inputIncludeTags.value])
-      && includeInList(value.output, search.value.output_id)
+      && includeInIngredient(value.output, [tempSearch.output_id ?? ''])
     )
   })
 })

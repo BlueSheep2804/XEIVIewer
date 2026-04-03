@@ -1,11 +1,11 @@
-export function includeInIngredient(list: string[], search: string[] | undefined): boolean {
+export function includeInIngredient(ingredients: string[], search: string[] | undefined): boolean {
   if (typeof search === 'undefined') return true
   if (search.length < 1) return true
   if (search[0] === '') return true
 
-  const result = list.find((value) => {
-    const ingredient = new Ingredient(value).value
-    return ingredient.some((ingredientValue) => {
+  const result = ingredients.find((rawIngredient) => {
+    const ingredientValues = new Ingredient(rawIngredient).value
+    return ingredientValues.some((ingredientValue) => {
       return search.includes(
         (ingredientValue.isTag ? '#' : '') + ingredientValue.value.full
       )
