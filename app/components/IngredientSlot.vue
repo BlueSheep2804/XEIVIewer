@@ -34,15 +34,31 @@ function getTagEntryFromIndex(index: number): string[] {
   return []
 }
 
-const getFirstItem = computed(() => {
+const getFirstEntry = computed(() => {
   const first = ingredientList.value[0]
-  if (first?.isTag ?? false) {
-    return Identifier.parse(getTagEntryFromIndex(0)[0] ?? '')
+  if (typeof first !== 'undefined' && first.isTag) {
+    return {
+      ...first,
+      value: Identifier.parse(getTagEntryFromIndex(0)[0] ?? '')
+    }
   }
-  return ingredientList.value[0]?.value ?? Identifier.parse('')
+  return first ?? {
+    type: Identifier.parse('item'),
+    value: Identifier.parse('minecraft:air'),
+    count: 1,
+    isTag: false
+  }
 })
 
-const isMultipleItem = computed(() => {
+const getFirstEntryDataGetter = computed(() => {
+  return getEntryDataGetter(getFirstEntry.value.type, getFirstEntry.value.value)
+})
+
+function getEntryDataGetter(type: Identifier, value: Identifier) {
+  return () => entryGetter(type.full)(value)
+}
+
+const isMultipleEntry = computed(() => {
   return ingredientList.value.length > 1 || ingredientList.value[0]?.isTag
 })
 const isOnlyTag = computed(() => {
@@ -59,8 +75,8 @@ const itemOverride = computed(() => {
     modId = identifier?.namespace ?? ''
   } else {
     itemName = $t('common.item_group')
-    itemId = `${getFirstItem.value.full}, +${ingredientList.value.length - 1}`
-    modId = getFirstItem.value.namespace
+    itemId = `${getFirstEntry.value.value.full}, +${ingredientList.value.length - 1}`
+    modId = getFirstEntry.value.value.namespace
   }
   return {
     itemName,
@@ -73,15 +89,18 @@ const open = ref(false)
 </script>
 
 <template>
-  <div v-if="isMultipleItem" class="inline-flex aspect-square">
+  <div v-if="isMultipleEntry" class="inline-flex aspect-square">
     <UPopover v-model:open="open" arrow :ui="{ content: 'p-4' }">
       <template #anchor>
-        <a v-if="getFirstItem" href="#" class="inline-block" @click.prevent="open = true">
+        <a v-if="getFirstEntry" href="#" class="inline-block" @click.prevent="open = true">
           <UChip inset color="success" size="3xl" class="inline-block">
-            <ItemImage
-              :item-id="getFirstItem"
+            <EntryImage
+              :entry-type="getFirstEntry.type"
+              :entry-id="getFirstEntry.value"
+              :count="getFirstEntry.count"
               :show-link="false"
               :override="itemOverride"
+              :get-entry-data="getFirstEntryDataGetter"
             />
           </UChip>
         </a>
@@ -92,9 +111,21 @@ const open = ref(false)
         </p>
         <div class="grid grid-cols-3 gap-2">
           <template v-for="(entry, index) in ingredientList.value" :key="entry.value">
-            <ItemImage v-if="!entry.isTag" :item-id="entry.value" class="max-w-17" />
+            <EntryImage
+              v-if="!entry.isTag"
+              :entry-type="entry.type"
+              :entry-id="entry.value"
+              :get-entry-data="getEntryDataGetter(entry.type, entry.value)"
+              :count="entry.count"
+              class="max-w-17"
+            />
             <template v-for="tag in getTagEntryFromIndex(index)" v-else :key="tag">
-              <ItemImage :item-id="Identifier.parse(tag)" class="max-w-17" />
+              <EntryImage
+                :entry-type="entry.type"
+                :entry-id="Identifier.parse(tag)"
+                :get-entry-data="getEntryDataGetter(entry.type, Identifier.parse(tag))"
+                class="max-w-17"
+              />
             </template>
           </template>
         </div>
@@ -102,6 +133,6 @@ const open = ref(false)
     </UPopover>
   </div>
   <div v-else class="inline-flex aspect-square">
-    <ItemImage :item-id="getFirstItem" />
+    <EntryImage :entry-type="getFirstEntry.type" :entry-id="getFirstEntry.value" :get-entry-data="getFirstEntryDataGetter" :count="getFirstEntry.count" />
   </div>
 </template>

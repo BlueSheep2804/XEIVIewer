@@ -4,24 +4,22 @@ import type { Item } from '~~/shared/tableTypes'
 type Props = {
   itemId?: Identifier
   item?: Item
+  count?: number
   showLink?: boolean
   override?: Override
 }
-const { itemId, item, showLink = true, override = {} } = defineProps<Props>()
+const { itemId, item, count = 1, showLink = true, override = {} } = defineProps<Props>()
 
-async function getEntryData(): Promise<Item> {
-  const { data, execute } = await useItem(itemId?.full ?? '')
-  await execute()
-  return data.value as Item
-}
+const entryType = Identifier.withDefaultNamespace('item')
 </script>
 
 <template>
   <EntryImage
-    entry-type="item"
+    :entry-type="entryType"
     :entry-id="itemId"
     :entry="item"
-    :get-entry-data="getEntryData"
+    :get-entry-data="async () => await getItemData(itemId)"
+    :count="count"
     :show-link="showLink"
     :override="override"
   />

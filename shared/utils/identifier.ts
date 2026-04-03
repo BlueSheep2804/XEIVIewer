@@ -5,6 +5,20 @@ export class Identifier {
     return `${this.namespace}:${this.path}`
   }
 
+  get simple() {
+    if (this.namespace === 'minecraft') {
+      return this.path
+    }
+    return this.full
+  }
+
+  equals(other: Identifier): boolean {
+    return (
+      this.namespace === other.namespace
+      && this.path === other.path
+    )
+  }
+
   static withDefaultNamespace(path: string) {
     return new Identifier('minecraft', path)
   }

@@ -1,32 +1,35 @@
 import { Identifier } from './identifier'
 
-const regex = /^(?:(?<count>\d+)x )?(?<id>(?:#?[0-9a-z_.-/]+:[0-9a-z_.-/]+(?:, ?)?)*)$/
+// eslint-disable-next-line no-useless-escape
+const regex = /^(?:(?<count>\d+)x )?(?:(?<isTag>#)?(?<type>[0-9a-z_.\/:-]+);?)(?<id>[0-9a-z_.\/-]+:[0-9a-z_.\/-]+)$/
 
 export class Ingredient {
-  public count: number
   public value: IngredientValue[]
 
-  constructor(entry: string) {
-    const match = entry.match(regex)
-    this.count = Number.parseInt(match?.groups?.count ?? '1')
-
-    const idList = match?.groups?.id?.split(',') ?? []
-    this.value = idList.map((id) => {
-      if (id.startsWith('#')) {
+  constructor(entries: string) {
+    if (entries.length == 0) {
+      this.value = []
+    } else {
+      this.value = entries.split(',').map((entry) => {
+        const matchGroup = entry.match(regex)?.groups
+        const count = Number.parseInt(matchGroup?.count ?? '1')
+        const type = matchGroup?.type ?? 'item'
+        const id = matchGroup?.id ?? 'xeiexporter:unknown'
+        const isTag = (matchGroup?.isTag ?? '') !== ''
         return {
-          value: Identifier.parse(id.substring(1)),
-          isTag: true
+          type: Identifier.parse(type),
+          value: Identifier.parse(id),
+          isTag,
+          count
         }
-      }
-      return {
-        value: Identifier.parse(id),
-        isTag: false
-      }
-    })
+      })
+    }
   }
 }
 
 export interface IngredientValue {
+  type: Identifier
   value: Identifier
   isTag: boolean
+  count: number
 }
