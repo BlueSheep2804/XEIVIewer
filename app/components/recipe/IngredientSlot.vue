@@ -92,8 +92,8 @@ const open = ref(false)
   <div v-if="isMultipleEntry" class="inline-flex aspect-square">
     <UPopover v-model:open="open" arrow :ui="{ content: 'p-4' }">
       <template #anchor>
-        <a v-if="getFirstEntry" href="#" class="inline-block" @click.prevent="open = true">
-          <UChip inset color="success" size="3xl" class="inline-block">
+        <a v-if="getFirstEntry" href="#" @click.prevent="open = true">
+          <UChip inset color="success" size="3xl">
             <EntryImage
               :entry-type="getFirstEntry.type"
               :entry-id="getFirstEntry.value"
@@ -133,6 +133,11 @@ const open = ref(false)
     </UPopover>
   </div>
   <div v-else class="inline-flex aspect-square">
-    <EntryImage :entry-type="getFirstEntry.type" :entry-id="getFirstEntry.value" :get-entry-data="getFirstEntryDataGetter" :count="getFirstEntry.count" />
+    <EntryImage
+      :entry-type="getFirstEntry.type"
+      :entry-id="getFirstEntry.value"
+      :get-entry-data="getFirstEntryDataGetter"
+      :count="getFirstEntry.count"
+    />
   </div>
 </template>

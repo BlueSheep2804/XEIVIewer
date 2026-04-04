@@ -25,7 +25,13 @@ const modDisplayName: Ref<string | undefined> = ref()
 const router = useRouter()
 
 const air = Identifier.withDefaultNamespace('air')
-const isNone = computed(() => identifier.value.equals(air))
+const isNone = computed(() => (
+  identifier.value.equals(air)
+  || (
+    typeof entry === 'undefined'
+    && typeof entryId === 'undefined'
+  )
+))
 const imageUrl = computed(() => `/assets/${entryType.simple}s/${identifier.value.namespace}/${identifier.value.path}.png`)
 const linkUrl = computed(() => `/${entryType.simple}/${identifier.value.full}`)
 
@@ -97,7 +103,7 @@ const toolTipModId = computed(() => {
     :content="{ side: 'top', sideOffset: 24, updatePositionStrategy: 'always' }"
   >
     <div
-      class="inline-flex flex-row-reverse items-end-safe aspect-square border-2 border-gray-700 bg-gray-400"
+      class="flex flex-row-reverse items-end-safe aspect-square border-2 border-gray-700 bg-gray-400"
       @pointerenter="showPopover"
       @pointerleave="open = false"
       @pointermove="(event: PointerEvent) => {
@@ -105,13 +111,10 @@ const toolTipModId = computed(() => {
         anchor.y = event.clientY
       }"
     >
-      <div>
-        <NuxtLink v-if="showLink && !isNone" :to="linkUrl">
-          <img :src="imageUrl" class="w-16" style="image-rendering: pixelated;">
-        </NuxtLink>
-        <img v-else-if="!showLink && !isNone" :src="imageUrl" class="w-16" style="image-rendering: pixelated;">
-        <div v-else class="w-full h-full" />
-      </div>
+      <NuxtLink v-if="showLink && !isNone" :to="linkUrl">
+        <img :src="imageUrl" style="image-rendering: pixelated;">
+      </NuxtLink>
+      <img v-else :src="imageUrl" style="image-rendering: pixelated;">
       <div v-if="count !== 1" class="absolute pointer-events-none p-0.5 m-1 rounded bg-gray-900/40 backdrop-blur-md">
         <p class="text-white text-sm">
           {{ count }}
