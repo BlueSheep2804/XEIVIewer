@@ -3,7 +3,9 @@ import type { SelectItem } from '@nuxt/ui'
 import type { RecipeType, TagItem } from '~~/shared/tableTypes'
 
 const route = useRoute()
-const { data: mods } = await useMods()
+const { mcLang } = useMCLang()
+const { data: mods, execute: modsExecute } = await useMods()
+await modsExecute()
 
 const search: Ref<RecipeSearch> = ref({})
 
@@ -50,9 +52,19 @@ const recipeTypeChoices = computed(() => {
       )
     }
 
+    const label = recipeType.titleKey !== '' && typeof mcLang.value !== 'undefined' && recipeType.titleKey in mcLang.value
+      ? mcLang.value[recipeType.titleKey]
+      : recipeType.titleFallback
     recipeTypes.push({
-      label: identifier.path,
-      value: recipeType.id
+      label,
+      value: recipeType.id,
+      avatar: {
+        src: `/assets/recipe_type/${identifier.namespace}/${identifier.path}.png`,
+        ui: {
+          image: 'rounded-none',
+          root: 'rounded-none'
+        }
+      }
     })
   })
   return [

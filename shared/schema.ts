@@ -31,6 +31,8 @@ export const recipeType = pgTable("recipe_type", {
 	catalyst: text().array().notNull(),
 	inputSize: integer().notNull(),
 	outputSize: integer().notNull(),
+	titleKey: text().notNull(),
+	titleFallback: text().notNull(),
 });
 
 export const mods = pgTable("mods", {
