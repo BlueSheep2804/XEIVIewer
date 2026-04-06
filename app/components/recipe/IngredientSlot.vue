@@ -64,23 +64,23 @@ const isMultipleEntry = computed(() => {
 const isOnlyTag = computed(() => {
   return tagList.length == 1
 })
-const itemOverride = computed(() => {
-  let itemName: string
-  let itemId: string
+const entryOverride = computed<EntryOverride>(() => {
+  let entryName: string
+  let entryId: string
   let modId: string
   if (isOnlyTag.value) {
     const identifier = ingredientList.value[0]?.value
-    itemName = $t('common.tag_ingredient', { tag: identifier?.path ?? '' })
-    itemId = `#${identifier?.full ?? ''}`
+    entryName = $t('common.tag_ingredient', { tag: identifier?.path ?? '' })
+    entryId = `#${identifier?.full ?? ''}`
     modId = identifier?.namespace ?? ''
   } else {
-    itemName = $t('common.item_group')
-    itemId = `${getFirstEntry.value.value.full}, +${ingredientList.value.length - 1}`
+    entryName = $t('common.group')
+    entryId = `${getFirstEntry.value.value.full}, +${ingredientList.value.length - 1}`
     modId = getFirstEntry.value.value.namespace
   }
   return {
-    itemName,
-    itemId,
+    entryName,
+    entryId,
     modId
   }
 })
@@ -99,7 +99,7 @@ const open = ref(false)
               :entry-id="getFirstEntry.value"
               :count="getFirstEntry.count"
               :show-link="false"
-              :override="itemOverride"
+              :override="entryOverride"
               :get-entry-data="getFirstEntryDataGetter"
             />
           </UChip>

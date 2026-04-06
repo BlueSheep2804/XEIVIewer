@@ -1,5 +1,5 @@
-export interface Override {
-  itemName?: string
-  itemId?: string
+export interface EntryOverride {
+  entryName?: string
+  entryId?: string
   modId?: string
 }

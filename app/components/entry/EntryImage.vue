@@ -9,7 +9,7 @@ type Props = {
   getEntryData: () => Promise<CommonEntry>
   count?: number
   showLink?: boolean
-  override?: Override
+  override?: EntryOverride
 }
 const { entryType, entryId, entry, getEntryData, count = 1, showLink = true, override = {} } = defineProps<Props>()
 
@@ -21,6 +21,9 @@ const identifier = computed(() => {
   }
 })
 const modDisplayName: Ref<string | undefined> = ref()
+
+const { data: mods, execute } = await useMods()
+await execute()
 
 const router = useRouter()
 
@@ -77,22 +80,23 @@ const reference = computed(() => ({
 }))
 
 const tooltipItemName = computed(() => {
-  if ('itemName' in override) {
-    return override.itemName
+  if ('entryName' in override && typeof override.entryName === 'string') {
+    return override.entryName
   }
   return getEntryName(entryData.value?.descriptionId)
 })
 const toolTipItemId = computed(() => {
-  if ('itemId' in override) {
-    return override.itemId
+  if ('entryId' in override && typeof override.entryId === 'string') {
+    return override.entryId
   }
   return identifier.value.full
 })
 const toolTipModId = computed(() => {
+  let modId = identifier.value.namespace
   if ('modId' in override && typeof override.modId === 'string') {
-    return firstUppercase(override.modId)
+    modId = override.modId
   }
-  return modDisplayName.value ?? firstUppercase(identifier.value.namespace)
+  return getModNameByObject(modId, mods)
 })
 </script>
 

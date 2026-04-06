@@ -8,7 +8,7 @@
     "search": "検索",
     "view_count": "表示数",
     "results": "{result}件",
-    "item_group": "アイテムグループ",
+    "group": "グループ",
     "tag_ingredient": "{tag}のいずれか",
     "view_uses": "用途を表示",
     "view_recipes": "レシピを表示"
