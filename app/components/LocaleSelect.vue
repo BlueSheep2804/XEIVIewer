@@ -54,7 +54,7 @@ const setLocaleTyped = (loc: string) => {
 </script>
 
 <template>
-  <div>
+  <div class="flex">
     <USelect
       v-model="mcLangCode"
       :items="mcLanguages"
