@@ -11,7 +11,8 @@
     "group": "Group",
     "tag_ingredient": "Any {tag}",
     "view_uses": "View Uses",
-    "view_recipes": "View Recipes"
+    "view_recipes": "View Recipes",
+    "minecraft_language": "Language in Minecraft"
   },
   "items": {
     "title": "Items",

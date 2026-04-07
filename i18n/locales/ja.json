@@ -11,7 +11,8 @@
     "group": "グループ",
     "tag_ingredient": "{tag}のいずれか",
     "view_uses": "用途を表示",
-    "view_recipes": "レシピを表示"
+    "view_recipes": "レシピを表示",
+    "minecraft_language": "Minecraft内の言語"
   },
   "items": {
     "title": "アイテム",

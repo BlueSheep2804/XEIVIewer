@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
-import { en, ja } from '@nuxt/ui/locale'
 
-const { locale, setLocale } = useI18n()
-
-const availableLocales = [en, ja]
+const { locale } = useI18n()
 
 useHead({
   meta: [
@@ -83,9 +80,7 @@ const navigationItems = computed<NavigationMenuItem[]>(() => [
       <template #right>
         <UColorModeButton />
 
-        <MCLocaleSelect />
-
-        <ULocaleSelect :model-value="locale" :locales="availableLocales" @update:model-value="setLocale($event)" />
+        <LocaleSelect />
       </template>
 
       <template #body>
