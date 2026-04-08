@@ -34,7 +34,7 @@ const mcLanguages = computed<SelectItem[]>(() => {
   return result
 })
 
-await callOnce(async () => {
+await callOnce('xei_LocaleLoading', async () => {
   await reload()
 })
 
