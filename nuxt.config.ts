@@ -13,7 +13,11 @@ export default defineNuxtConfig({
   ],
 
   devtools: {
-    enabled: true
+    enabled: true,
+
+    timeline: {
+      enabled: true
+    }
   },
 
   css: ['~/assets/css/main.css'],
@@ -25,6 +29,14 @@ export default defineNuxtConfig({
   },
 
   compatibilityDate: '2025-01-15',
+
+  nitro: {
+    devStorage: {
+      cache: {
+        driver: 'memory'
+      }
+    }
+  },
 
   eslint: {
     config: {
