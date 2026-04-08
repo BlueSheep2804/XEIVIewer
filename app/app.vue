@@ -15,17 +15,14 @@ useHead({
   }
 })
 
-const title = 'XEIEXporter'
+const title = 'XEIVIewer'
 const description = 'Web Recipe Viewer for Minecraft'
 
 useSeoMeta({
   title,
   description,
   ogTitle: title,
-  ogDescription: description,
-  ogImage: 'https://ui.nuxt.com/assets/templates/nuxt/starter-light.png',
-  twitterImage: 'https://ui.nuxt.com/assets/templates/nuxt/starter-light.png',
-  twitterCard: 'summary_large_image'
+  ogDescription: description
 })
 
 const navigationItems = computed<NavigationMenuItem[]>(() => [
