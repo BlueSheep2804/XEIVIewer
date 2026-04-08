@@ -21,6 +21,7 @@ const tagList = tagFetchList
   })
 
 function getTagEntryFromIndex(index: number): string[] {
+  if (tagList.length <= index) return []
   const tagRef = tagList[index]
   if (tagRef === null || typeof tagRef === 'undefined') return []
   const tag = tagRef.value
@@ -34,20 +35,25 @@ function getTagEntryFromIndex(index: number): string[] {
   return []
 }
 
+const emptyEntry = {
+  type: Identifier.parse('item'),
+  value: Identifier.parse('minecraft:air'),
+  count: 1,
+  isTag: false
+}
+
 const getFirstEntry = computed(() => {
   const first = ingredientList.value[0]
   if (typeof first !== 'undefined' && first.isTag) {
-    return {
-      ...first,
-      value: Identifier.parse(getTagEntryFromIndex(0)[0] ?? '')
-    }
+    const entry = getTagEntryFromIndex(0)[0]
+    if (typeof entry === 'string') {
+      return {
+        ...first,
+        value: Identifier.parse(entry)
+      }
+    } else return emptyEntry
   }
-  return first ?? {
-    type: Identifier.parse('item'),
-    value: Identifier.parse('minecraft:air'),
-    count: 1,
-    isTag: false
-  }
+  return first ?? emptyEntry
 })
 
 const getFirstEntryDataGetter = computed(() => {
