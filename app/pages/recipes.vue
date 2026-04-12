@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Recipe, RecipeType } from '~~/shared/tableTypes'
+import type { RecipeType } from '~~/shared/tableTypes'
 
 // 汎用
 type RecipeTypeItem = {
@@ -10,11 +10,34 @@ type RecipeTypeItem = {
 
 const { mcLang } = useMCLang()
 
-// レシピタイプ(カテゴリ)
-const { data: allRecipeTypes, execute: fetchRecipeTypes } = await useRecipeTypes()
-await fetchRecipeTypes()
+// 初期化
 const recipeType = ref<RecipeType>()
+const { data: allRecipeTypes, execute: fetchRecipeTypes, status: recipeTypeStatus } = await useRecipeTypes()
+const { data: recipes, execute: fetchRecipes } = await useRecipes(() => recipeType.value?.id)
 
+const recipeTypeInit = watch(recipeTypeStatus, async () => {
+  console.log(recipeTypeStatus.value)
+  if (recipeTypeStatus.value === 'success') {
+    recipeType.value = allRecipeTypes.value?.at(0)
+    await fetchRecipes()
+    recipeTypeInit.stop()
+  }
+})
+await fetchRecipeTypes()
+
+// レシピ
+const displayedRecipes = computed(() => {
+  return (recipes.value ?? []).slice(
+    (page.value - 1) * itemsPerPage.value,
+    page.value * itemsPerPage.value
+  )
+})
+
+function recipeLink(namespace: string, path: string) {
+  return new Identifier(namespace, path).full
+}
+
+// レシピタイプ(カテゴリ)
 const recipeTypeChoices = computed(() => {
   const recipeTypes: RecipeTypeItem[] = []
   allRecipeTypes.value?.forEach((recipeType) => {
@@ -39,6 +62,7 @@ const recipeTypeChoices = computed(() => {
 const clickRecipeType = async (type: string) => {
   recipeType.value = getRecipeType(type)
   await fetchRecipes()
+  page.value = 1
 }
 
 const getRecipeType = (type: string): RecipeType | undefined => {
@@ -56,32 +80,10 @@ const recipeTypeLabel = computed(() => {
     : recipeType.value.titleFallback
 })
 
-// レシピ
-const recipes = ref<Recipe[]>([])
-
-const displayedRecipes = computed(() => {
-  return recipes.value.slice(
-    (page.value - 1) * itemsPerPage.value,
-    page.value * itemsPerPage.value
-  )
-})
-
-const fetchRecipes = async () => {
-  if (typeof recipeType.value === 'undefined') return
-  const { data: allRecipes, execute } = await useRecipes(recipeType.value.id)
-  await execute()
-  recipes.value = allRecipes.value ?? []
-  page.value = 1
-}
-
-const recipeLink = (namespace: string, path: string) => {
-  return new Identifier(namespace, path).full
-}
-
 // ページ
 const page = ref(1)
 const itemsPerPage = useItemsPerPage('recipes', 10)
-const total = computed(() => recipes.value.length)
+const total = computed(() => recipes.value?.length ?? 0)
 </script>
 
 <template>

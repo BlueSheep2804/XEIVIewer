@@ -5,10 +5,20 @@ export const useRecipeTypes = async () => {
   )
 }
 
-export const useRecipes = async (type: string) => {
+export const useRecipes = async (type: string | (() => string | undefined)) => {
+  if (typeof type === 'function') {
+    return await useFetch(
+      () => `/api/recipes/${type()}`,
+      {
+        ...defaultApiFetchOptions,
+        key: () => `recipes#${type()}`,
+        default: () => []
+      }
+    )
+  }
   return await useFetch(
     `/api/recipes/${type}`,
-    { key: `recipes#${type}`, ...defaultApiFetchOptions }
+    { ...defaultApiFetchOptions, key: `recipes#${type}` }
   )
 }
 
