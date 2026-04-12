@@ -8,22 +8,15 @@ type RecipeTypeItem = {
   src: string
 }
 
+const route = useRoute()
+const router = useRouter()
+
 const { mcLang } = useMCLang()
 
 // 初期化
 const recipeType = ref<RecipeType>()
 const { data: allRecipeTypes, execute: fetchRecipeTypes, status: recipeTypeStatus } = await useRecipeTypes()
 const { data: recipes, execute: fetchRecipes } = await useRecipes(() => recipeType.value?.id)
-
-const recipeTypeInit = watch(recipeTypeStatus, async () => {
-  console.log(recipeTypeStatus.value)
-  if (recipeTypeStatus.value === 'success') {
-    recipeType.value = allRecipeTypes.value?.at(0)
-    await fetchRecipes()
-    recipeTypeInit.stop()
-  }
-})
-await fetchRecipeTypes()
 
 // レシピ
 const displayedRecipes = computed(() => {
@@ -59,9 +52,14 @@ const recipeTypeChoices = computed(() => {
   return recipeTypes
 })
 
-const clickRecipeType = async (type: string) => {
-  recipeType.value = getRecipeType(type)
+async function changeRecipeType(type: RecipeType | undefined) {
+  recipeType.value = type
+  updateQuery()
   await fetchRecipes()
+}
+
+async function clickRecipeType(type: string) {
+  await changeRecipeType(getRecipeType(type))
   page.value = 1
 }
 
@@ -84,6 +82,30 @@ const recipeTypeLabel = computed(() => {
 const page = ref(1)
 const itemsPerPage = useItemsPerPage('recipes', 10)
 const total = computed(() => recipes.value?.length ?? 0)
+
+// クエリ
+function updateQuery() {
+  router.push({
+    query: {
+      ...route.query,
+      type: recipeType.value?.id
+    }
+  })
+}
+
+// データ取得
+const recipeTypeInit = watch(recipeTypeStatus, async () => {
+  console.log(recipeTypeStatus.value)
+  if (recipeTypeStatus.value === 'success') {
+    if ('type' in route.query && typeof route.query.type === 'string') {
+      changeRecipeType(getRecipeType(route.query.type))
+    } else {
+      changeRecipeType(allRecipeTypes.value?.at(0))
+    }
+    recipeTypeInit.stop()
+  }
+})
+await fetchRecipeTypes()
 </script>
 
 <template>
