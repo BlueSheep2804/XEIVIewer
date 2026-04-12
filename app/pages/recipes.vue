@@ -2,6 +2,12 @@
 import type { Recipe, RecipeType } from '~~/shared/tableTypes'
 
 // 汎用
+type RecipeTypeItem = {
+  label: string
+  value: string
+  src: string
+}
+
 const { mcLang } = useMCLang()
 
 // レシピタイプ(カテゴリ)
@@ -10,17 +16,17 @@ await fetchRecipeTypes()
 const recipeType = ref<RecipeType>()
 
 const recipeTypeChoices = computed(() => {
-  const recipeTypes: {
-    label: string
-    value: string
-    src: string
-  }[] = []
-  // const registeredMods: string[] = []
+  const recipeTypes: RecipeTypeItem[] = []
   allRecipeTypes.value?.forEach((recipeType) => {
     const identifier = Identifier.parse(recipeType.id)
-    const label = recipeType.titleKey !== '' && typeof mcLang.value !== 'undefined' && recipeType.titleKey in mcLang.value
-      ? mcLang.value[recipeType.titleKey]
-      : recipeType.titleFallback
+    let label = recipeType.titleFallback
+    if (
+      recipeType.titleKey !== ''
+      && typeof mcLang.value !== 'undefined'
+      && recipeType.titleKey in mcLang.value
+    ) {
+      label = mcLang.value[recipeType.titleKey] ?? ''
+    }
     recipeTypes.push({
       label,
       value: recipeType.id,
@@ -64,7 +70,7 @@ const fetchRecipes = async () => {
   if (typeof recipeType.value === 'undefined') return
   const { data: allRecipes, execute } = await useRecipes(recipeType.value.id)
   await execute()
-  recipes.value = allRecipes.value
+  recipes.value = allRecipes.value ?? []
   page.value = 1
 }
 
