@@ -15,3 +15,24 @@ export const useApi = async (
     ...options
   })
 }
+
+export const useRecipeTypes = async () => {
+  return await useApi(
+    '/api/recipe_types',
+    'recipe_types'
+  )
+}
+
+export const useRecipes = async (type: string) => {
+  return await useApi(
+    `/api/recipes/${type}`,
+    `recipes#${type}`
+  )
+}
+
+export const useRecipe = async (id: string) => {
+  return await useApi(
+    `/api/recipe/${id}`,
+    `recipe#${id}`
+  )
+}

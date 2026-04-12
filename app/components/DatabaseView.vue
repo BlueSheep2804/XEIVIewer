@@ -8,7 +8,7 @@ type Props = {
   itemsPerPageStep?: number
 }
 
-const { entries, total, itemsPerPageStep = 10 } = defineProps<Props>()
+const { entries, total, itemsPerPageStep } = defineProps<Props>()
 const search = defineModel<Search>('search', { required: true })
 const page = defineModel<number>('page', { required: true })
 const itemsPerPage = defineModel<number>('items-per-page', { required: true })
@@ -26,14 +26,7 @@ watch(page, () => {
 <template>
   <UPageSection>
     <SearchComponent v-model:search="search" :entries="entries" />
-    <div class="flex">
-      <UFormField :label="$t('common.view_count')" class="grow">
-        <UInputNumber v-model="itemsPerPage" :step="itemsPerPageStep" class="w-32" />
-      </UFormField>
-      <p class="text-md font-medium">
-        {{ $t('common.results', { result: total }) }}
-      </p>
-    </div>
+    <DatabaseInfo v-model="itemsPerPage" :items-per-page-step="itemsPerPageStep" :total="total" />
     <Pagination v-model:page="page" :items-per-page="itemsPerPage" :total="total" />
     <slot />
     <Pagination v-model:page="page" :items-per-page="itemsPerPage" :total="total" />

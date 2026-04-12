@@ -1,145 +1,120 @@
 <script setup lang="ts">
-import type { SelectItem } from '@nuxt/ui'
-import type { RecipeType, TagItem } from '~~/shared/tableTypes'
+import type { Recipe, RecipeType } from '~~/shared/tableTypes'
 
-const route = useRoute()
+// 汎用
 const { mcLang } = useMCLang()
-const { data: mods, execute: modsExecute } = await useMods()
-await modsExecute()
 
-const search: Ref<RecipeSearch> = ref({})
-
-const searchEntries: ComputedRef<RecipeSearchDefine> = computed(() => ({
-  mod_id: {
-    label: $t('recipes.search.mod_id'),
-    items: []
-  },
-  registry_id: {
-    label: $t('recipes.search.registry_id'),
-    items: []
-  },
-  input_id: {
-    label: $t('recipes.search.input_id'),
-    items: []
-  },
-  output_id: {
-    label: $t('recipes.search.output_id'),
-    items: []
-  },
-  recipe_type: {
-    label: $t('recipes.search.recipe_type'),
-    items: recipeTypeChoices.value,
-    disableSearch: true
-  }
-}))
+// レシピタイプ(カテゴリ)
+const { data: allRecipeTypes, execute: fetchRecipeTypes } = await useRecipeTypes()
+await fetchRecipeTypes()
+const recipeType = ref<RecipeType>()
 
 const recipeTypeChoices = computed(() => {
-  const recipeTypes: SelectItem[] = []
-  const registeredMods: string[] = []
+  const recipeTypes: {
+    label: string
+    value: string
+    src: string
+  }[] = []
+  // const registeredMods: string[] = []
   allRecipeTypes.value?.forEach((recipeType) => {
     const identifier = Identifier.parse(recipeType.id)
-    const modId = identifier.namespace
-    if (!registeredMods.includes(modId)) {
-      registeredMods.push(modId)
-      recipeTypes.push(
-        {
-          type: 'separator'
-        },
-        {
-          label: getModNameByObject(modId, mods),
-          type: 'label'
-        }
-      )
-    }
-
     const label = recipeType.titleKey !== '' && typeof mcLang.value !== 'undefined' && recipeType.titleKey in mcLang.value
       ? mcLang.value[recipeType.titleKey]
       : recipeType.titleFallback
     recipeTypes.push({
       label,
       value: recipeType.id,
-      avatar: {
-        src: `/assets/recipe_type/${identifier.namespace}/${identifier.path}.png`,
-        ui: {
-          image: 'rounded-none',
-          root: 'rounded-none'
-        }
-      }
+      src: `/assets/recipe_type/${identifier.namespace}/${identifier.path}.png`
     })
   })
-  return [
-    {
-      label: $t('common.all'),
-      value: 'all'
-    },
-    ...recipeTypes
-  ]
+  return recipeTypes
 })
 
-const { data: recipes } = await useFetch('/api/recipes', {
-  server: false,
-  lazy: true
-})
-const { data: allRecipeTypes } = await useFetch('/api/recipe_types', {
-  server: false,
-  lazy: true
+const clickRecipeType = async (type: string) => {
+  recipeType.value = getRecipeType(type)
+  await fetchRecipes()
+}
+
+const getRecipeType = (type: string): RecipeType | undefined => {
+  if (!Array.isArray(allRecipeTypes.value)) return
+  return allRecipeTypes.value.find(value => (
+    'id' in value
+    && typeof value.id === 'string'
+    && value.id === type
+  ))
+}
+const recipeTypeLabel = computed(() => {
+  if (typeof recipeType.value === 'undefined') return ''
+  return recipeType.value.titleKey !== '' && typeof mcLang.value !== 'undefined' && recipeType.value.titleKey in mcLang.value
+    ? mcLang.value[recipeType.value.titleKey]
+    : recipeType.value.titleFallback
 })
 
-const allRecipes = computed(() => {
-  return recipes.value?.filter((recipe) => {
-    const tempSearch = search.value
-    return (
-      commonSearch(tempSearch, recipe.namespace, recipe.path)
-      && includeInIngredient(recipe.input, [tempSearch.input_id ?? '', ...inputIncludeTags.value])
-      && includeInIngredient(recipe.output, [tempSearch.output_id ?? ''])
-      && (recipe.type === tempSearch.recipe_type || 'all' === (tempSearch.recipe_type ?? 'all'))
-    )
-  })
-})
+// レシピ
+const recipes = ref<Recipe[]>([])
+
 const displayedRecipes = computed(() => {
-  return allRecipes.value?.slice(
+  return recipes.value.slice(
     (page.value - 1) * itemsPerPage.value,
     page.value * itemsPerPage.value
   )
 })
 
-const { data: inputTags, execute: inputTagsRefresh } = await useApi(
-  () => `/api/tags/item?include_id=${search.value.input_id}`,
-  () => `tags.item:${search.value.input_id}`
-)
-await inputTagsRefresh()
-
-const inputIncludeTags = computed((): string[] => {
-  const tags = inputTags.value as Record<keyof TagItem, string>[]
-  return tags.map(value => `#${value.namespace}:${value.path}`)
-})
+const fetchRecipes = async () => {
+  if (typeof recipeType.value === 'undefined') return
+  const { data: allRecipes, execute } = await useRecipes(recipeType.value.id)
+  await execute()
+  recipes.value = allRecipes.value
+  page.value = 1
+}
 
 const recipeLink = (namespace: string, path: string) => {
   return new Identifier(namespace, path).full
 }
-const getRecipeType = (id: string): RecipeType | undefined => {
-  return allRecipeTypes.value?.filter(value => value.id === id)[0]
-}
 
-const page = ref(Number.parseInt(route.query?.page?.toString() ?? '1'))
+// ページ
+const page = ref(1)
 const itemsPerPage = useItemsPerPage('recipes', 10)
-const total = computed(() => allRecipes.value?.length ?? 0)
+const total = computed(() => recipes.value.length)
 </script>
 
 <template>
-  <DatabaseView
-    v-model:search="search"
-    v-model:page="page"
-    v-model:items-per-page="itemsPerPage"
-    :entries="searchEntries"
-    :total="total"
+  <div
+    class="flex flex-col items-center px-4 py-12 gap-8"
   >
+    <div class="w-[90vw] p-4 shrink bg-muted rounded-2xl">
+      <UScrollArea v-slot="{ item }" :items="recipeTypeChoices" orientation="horizontal" class="w-full">
+        <button
+          class="w-17 p-2 border-2 rounded-t-2xl"
+          :class="{
+            'bg-primary': recipeType?.id === item.value,
+            'hover:bg-primary/75': recipeType?.id === item.value,
+            'hover:bg-accented': recipeType?.id !== item.value
+          }"
+          @click="clickRecipeType(item.value)"
+        >
+          <img :src="item.src" class="aspect-square">
+        </button>
+      </UScrollArea>
+      <div class="flex justify-center">
+        <p class="text-2xl sm:text-3xl mt-4">
+          {{ recipeTypeLabel }}
+        </p>
+      </div>
+      <DatabaseInfo v-model="itemsPerPage" :total="total" />
+    </div>
+    <Pagination v-model:page="page" :total="total" :items-per-page="itemsPerPage" />
     <div class="grid gap-4 justify-items-center items-center grid-cols-1 lg:grid-cols-2">
       <template v-for="recipe in displayedRecipes" :key="recipe.id">
         <NuxtLink :to="`/recipe/${recipeLink(recipe.namespace, recipe.path)}`" class="h-fit">
-          <RecipeView :recipe="recipe" :recipe-type="getRecipeType(recipe.type)" />
+          <RecipeView :recipe="recipe" />
         </NuxtLink>
       </template>
     </div>
-  </DatabaseView>
+    <Pagination v-model:page="page" :total="total" :items-per-page="itemsPerPage" />
+    <!-- <div class="flex">
+      <USelect v-model="recipeType" :items="recipeTypeChoices" :ui="{ content: 'min-w-fit' }" />
+      <UButton icon="lucide:circle" @click="fetchRecipes" />
+    </div> -->
+  </div>
 </template>
