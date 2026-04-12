@@ -109,18 +109,14 @@ const total = computed(() => recipes.value.length)
       </div>
       <DatabaseInfo v-model="itemsPerPage" :total="total" />
     </div>
-    <Pagination v-model:page="page" :total="total" :items-per-page="itemsPerPage" />
-    <div class="grid gap-4 justify-items-center items-center grid-cols-1 lg:grid-cols-2">
-      <template v-for="recipe in displayedRecipes" :key="recipe.id">
-        <NuxtLink :to="`/recipe/${recipeLink(recipe.namespace, recipe.path)}`" class="h-fit">
-          <RecipeView :recipe="recipe" />
-        </NuxtLink>
-      </template>
-    </div>
-    <Pagination v-model:page="page" :total="total" :items-per-page="itemsPerPage" />
-    <!-- <div class="flex">
-      <USelect v-model="recipeType" :items="recipeTypeChoices" :ui="{ content: 'min-w-fit' }" />
-      <UButton icon="lucide:circle" @click="fetchRecipes" />
-    </div> -->
+    <CommonPagination v-model="page" :total="total" :items-per-page="itemsPerPage">
+      <div class="grid gap-4 justify-items-center items-center grid-cols-1 lg:grid-cols-2">
+        <template v-for="recipe in displayedRecipes" :key="recipe.id">
+          <NuxtLink :to="`/recipe/${recipeLink(recipe.namespace, recipe.path)}`" class="h-fit">
+            <RecipeView :recipe="recipe" />
+          </NuxtLink>
+        </template>
+      </div>
+    </CommonPagination>
   </div>
 </template>
