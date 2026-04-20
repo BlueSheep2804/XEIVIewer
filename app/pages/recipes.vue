@@ -15,15 +15,31 @@ const { mcLang } = useMCLang()
 
 // 初期化
 const recipeType = ref<RecipeType>()
+const recipeQuery = ref<RecipeQuery>({})
 const { data: allRecipeTypes, execute: fetchRecipeTypes, status: recipeTypeStatus } = await useRecipeTypes()
 const { data: recipes, execute: fetchRecipes } = await useRecipes(() => recipeType.value?.id)
+const { data: lookupRecipes, execute: fetchFilteredRecipes } = await useRecipesWithQuery(recipeQuery)
 
 // レシピ
+const filteredLookupRecipes = computed(() => {
+  return (lookupRecipes.value ?? [])
+    .filter(value => value.type === recipeType.value?.id)
+})
+
 const displayedRecipes = computed(() => {
-  return (recipes.value ?? []).slice(
-    (page.value - 1) * itemsPerPage.value,
-    page.value * itemsPerPage.value
-  )
+  if (isLookupEmpty.value) {
+    return (recipes.value ?? [])
+      .slice(
+        (page.value - 1) * itemsPerPage.value,
+        page.value * itemsPerPage.value
+      )
+  } else {
+    return filteredLookupRecipes.value
+      .slice(
+        (page.value - 1) * itemsPerPage.value,
+        page.value * itemsPerPage.value
+      )
+  }
 })
 
 function recipeLink(namespace: string, path: string) {
@@ -33,24 +49,39 @@ function recipeLink(namespace: string, path: string) {
 // レシピタイプ(カテゴリ)
 const recipeTypeChoices = computed(() => {
   const recipeTypes: RecipeTypeItem[] = []
-  allRecipeTypes.value?.forEach((recipeType) => {
-    const identifier = Identifier.parse(recipeType.id)
-    let label = recipeType.titleFallback
-    if (
-      recipeType.titleKey !== ''
-      && typeof mcLang.value !== 'undefined'
-      && recipeType.titleKey in mcLang.value
-    ) {
-      label = mcLang.value[recipeType.titleKey] ?? ''
-    }
-    recipeTypes.push({
-      label,
-      value: recipeType.id,
-      src: `/assets/recipe_type/${identifier.namespace}/${identifier.path}.png`
+
+  if (isLookupEmpty.value) {
+    allRecipeTypes.value?.forEach((recipeType) => {
+      recipeTypes.push(convertRecipeTypeItem(recipeType))
     })
-  })
+  } else {
+    new Set(lookupRecipes.value?.map(value => value.type) ?? []).forEach((value) => {
+      const recipeType = allRecipeTypes.value?.find(recipeType => recipeType.id === value)
+      if (typeof recipeType !== 'undefined') {
+        recipeTypes.push(convertRecipeTypeItem(recipeType))
+      }
+    })
+  }
   return recipeTypes
 })
+
+function convertRecipeTypeItem(recipeType: RecipeType): RecipeTypeItem {
+  const identifier = Identifier.parse(recipeType.id)
+  let label = recipeType.titleFallback
+  if (
+    recipeType.titleKey !== ''
+    && typeof mcLang.value !== 'undefined'
+    && recipeType.titleKey in mcLang.value
+  ) {
+    label = mcLang.value[recipeType.titleKey] ?? ''
+  }
+
+  return {
+    label,
+    value: recipeType.id,
+    src: `/assets/recipe_type/${identifier.namespace}/${identifier.path}.png`
+  }
+}
 
 async function changeRecipeType(type: RecipeType | undefined) {
   recipeType.value = type
@@ -81,9 +112,38 @@ const recipeTypeLabel = computed(() => {
 // ページ
 const page = ref(1)
 const itemsPerPage = useItemsPerPage('recipes', 10)
-const total = computed(() => recipes.value?.length ?? 0)
+const total = computed(() => {
+  if (isLookupEmpty.value) {
+    return recipes.value?.length ?? 0
+  } else {
+    return filteredLookupRecipes.value.length
+  }
+})
 
 // クエリ
+const isLookupEmpty = computed(() => (
+  typeof recipeQuery.value.input === 'undefined'
+  && typeof recipeQuery.value.output === 'undefined'
+))
+
+function getQuery(value: (string | null) | (string | null)[] | undefined): string | undefined {
+  if (value === null) return
+  if (Array.isArray(value)) return
+  return value
+}
+//  タブ同期させる
+async function updateRecipeQuery() {
+  recipeQuery.value.input = getQuery(route.query.input)
+  recipeQuery.value.output = getQuery(route.query.output)
+  if (!isLookupEmpty.value) {
+    await fetchFilteredRecipes()
+  }
+}
+updateRecipeQuery()
+watch(route, async () => {
+  await updateRecipeQuery()
+})
+
 function updateQuery() {
   router.push({
     query: {
@@ -99,8 +159,6 @@ const recipeTypeInit = watch(recipeTypeStatus, async () => {
   if (recipeTypeStatus.value === 'success') {
     if ('type' in route.query && typeof route.query.type === 'string') {
       changeRecipeType(getRecipeType(route.query.type))
-    } else {
-      changeRecipeType(allRecipeTypes.value?.at(0))
     }
     recipeTypeInit.stop()
   }
@@ -112,6 +170,7 @@ await fetchRecipeTypes()
   <div
     class="flex flex-col items-center px-4 py-12 gap-8"
   >
+    {{ recipeTypeChoices }}
     <div class="w-[90vw] p-4 shrink bg-muted rounded-2xl">
       <UScrollArea v-slot="{ item }" :items="recipeTypeChoices" orientation="horizontal" class="w-full">
         <button

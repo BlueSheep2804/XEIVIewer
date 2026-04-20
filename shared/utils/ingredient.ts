@@ -10,19 +10,7 @@ export class Ingredient {
     if (entries.length == 0) {
       this.value = []
     } else {
-      this.value = entries.split(',').map((entry) => {
-        const matchGroup = entry.match(regex)?.groups
-        const count = Number.parseInt(matchGroup?.count ?? '1')
-        const type = matchGroup?.type ?? 'item'
-        const id = matchGroup?.id ?? 'xeiexporter:unknown'
-        const isTag = (matchGroup?.isTag ?? '') !== ''
-        return {
-          type: Identifier.parse(type),
-          value: Identifier.parse(id),
-          isTag,
-          count
-        }
-      })
+      this.value = entries.split(',').map(entry => parseIngredientValue(entry))
     }
   }
 }
@@ -32,4 +20,18 @@ export interface IngredientValue {
   value: Identifier
   isTag: boolean
   count: number
+}
+
+export function parseIngredientValue(entry: string): IngredientValue {
+  const matchGroup = entry.match(regex)?.groups
+  const count = Number.parseInt(matchGroup?.count ?? '1')
+  const type = matchGroup?.type ?? 'item'
+  const id = matchGroup?.id ?? 'xeiexporter:unknown'
+  const isTag = (matchGroup?.isTag ?? '') !== ''
+  return {
+    type: Identifier.parse(type),
+    value: Identifier.parse(id),
+    isTag,
+    count
+  }
 }
