@@ -5,8 +5,8 @@ const route = useRoute()
 const router = useRouter()
 const itemId = ref(Identifier.parse(route.params.id))
 
-const recipeOutputUrl = computed(() => getRecipeOutputUrl(itemId.value))
-const recipeInputUrl = computed(() => getRecipeInputUrl(itemId.value))
+const recipeOutputUrl = computed(() => getRecipeOutputUrl(registryIdentifier.item, itemId.value))
+const recipeInputUrl = computed(() => getRecipeInputUrl(registryIdentifier.item, itemId.value))
 
 onKeyDown('r', (_) => {
   router.push(recipeOutputUrl.value)

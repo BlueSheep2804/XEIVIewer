@@ -12,28 +12,34 @@ export default cachedEventHandler(async (event) => {
         .select({ namespace: sql`namespace`, path: sql`path` })
         .from(table)
         .where(
-          sql`${ingredient.value.full} = ANY(entry)`
+          sql`${ingredient.entry.full} = ANY(entry)`
         )
       const accept = [
-        query.input,
-        ...tags.map(value => `#${ingredient.type.simple};${value.namespace}:${value.path}`)
+        ingredient.entry.full,
+        ...tags.map(value => `#${value.namespace}:${value.path}`)
       ]
       return await db
         .select()
         .from(recipes)
         .where(
-          sql`exists (
-            select 1 from unnest(${recipes.input}) as element
-            where element ILIKE ANY(ARRAY[${sql.join(accept.map(value => `%${value}`), sql`, `)}])
-          )`
+          sql`${recipes.input} @? '$[*][*] ? (
+            @.type == ${sql.identifier(ingredient.type.full)}
+            && @.entry like_regex ${sql.identifier(`^(${accept.join('|')})$`)}
+          )'`
         )
     }
   } else if ('output' in query && typeof query.output === 'string') {
+    const ingredient = parseIngredientValue(query.output)
     return await db
       .select()
       .from(recipes)
       .where(
-        sql`${query.output} = ANY(${recipes.output})`
+        sql`${recipes.output} @? ${
+          sql`'$[*][*] ? (
+            @.type == ${sql.identifier(ingredient.type.full)}
+            && @.entry == ${sql.identifier(ingredient.entry.full)}
+          )'`
+        }`
       )
   } else {
     throw createError({
@@ -51,5 +57,6 @@ export default cachedEventHandler(async (event) => {
       return `output_${query.output.replaceAll(/[;:]/g, '_')}`
     }
     return 'recipes'
-  }
+  },
+  shouldBypassCache: () => true
 })

@@ -13,3 +13,10 @@ export type CommonEntry = {
   name: string
   descriptionId: string
 }
+
+export type RecipeEntry = {
+  type: string
+  entry: string
+  amount?: number
+  chance?: number
+}

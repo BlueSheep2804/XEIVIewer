@@ -10,3 +10,8 @@ export const registryTags: Record<string, PgTable> = {
   item: tagsItem,
   fluid: tagsFluid
 }
+
+export const registryIdentifier = {
+  item: Identifier.withDefaultNamespace('item'),
+  fluid: Identifier.withDefaultNamespace('fluid')
+}

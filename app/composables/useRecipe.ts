@@ -47,7 +47,7 @@ function generateKeyFromQuery(query: RecipeQuery | undefined): string {
     key = `output=${query.output}`
   } else key = ''
 
-  return key
+  return 'recipes#' + key
 }
 
 export const useRecipe = async (id: string) => {

@@ -18,7 +18,7 @@ const recipeType = ref<RecipeType>()
 const recipeQuery = ref<RecipeQuery>({})
 const { data: allRecipeTypes, execute: fetchRecipeTypes, status: recipeTypeStatus } = await useRecipeTypes()
 const { data: recipes, execute: fetchRecipes } = await useRecipes(() => recipeType.value?.id)
-const { data: lookupRecipes, execute: fetchFilteredRecipes } = await useRecipesWithQuery(recipeQuery)
+const { data: lookupRecipes, execute: fetchLookupRecipes } = await useRecipesWithQuery(recipeQuery)
 
 // レシピ
 const filteredLookupRecipes = computed(() => {
@@ -86,7 +86,9 @@ function convertRecipeTypeItem(recipeType: RecipeType): RecipeTypeItem {
 async function changeRecipeType(type: RecipeType | undefined) {
   recipeType.value = type
   updateQuery()
-  await fetchRecipes()
+  if (isLookupEmpty.value) {
+    await fetchRecipes()
+  }
 }
 
 async function clickRecipeType(type: string) {
@@ -131,16 +133,33 @@ function getQuery(value: (string | null) | (string | null)[] | undefined): strin
   if (Array.isArray(value)) return
   return value
 }
-//  タブ同期させる
+
 async function updateRecipeQuery() {
-  recipeQuery.value.input = getQuery(route.query.input)
-  recipeQuery.value.output = getQuery(route.query.output)
-  if (!isLookupEmpty.value) {
-    await fetchFilteredRecipes()
+  const now: RecipeQuery = {
+    input: getQuery(route.query.input),
+    output: getQuery(route.query.output)
+  }
+  if (!(
+    recipeQuery.value.input === now.input
+    && recipeQuery.value.output === now.output
+  )) {
+    recipeQuery.value.input = now.input
+    recipeQuery.value.output = now.output
+    if (!isLookupEmpty.value) {
+      await fetchLookupRecipes()
+      page.value = 1
+      if ((lookupRecipes.value?.length ?? 0) === 0) {
+        recipeType.value = undefined
+      }
+    }
   }
 }
-updateRecipeQuery()
+await updateRecipeQuery()
 watch(route, async () => {
+  const type = getQuery(route.query.type)
+  if (typeof type === 'string') {
+    recipeType.value = getRecipeType(type)
+  }
   await updateRecipeQuery()
 })
 
@@ -155,10 +174,10 @@ function updateQuery() {
 
 // データ取得
 const recipeTypeInit = watch(recipeTypeStatus, async () => {
-  console.log(recipeTypeStatus.value)
   if (recipeTypeStatus.value === 'success') {
-    if ('type' in route.query && typeof route.query.type === 'string') {
-      changeRecipeType(getRecipeType(route.query.type))
+    const type = getQuery(route.query.type)
+    if (typeof type === 'string') {
+      changeRecipeType(getRecipeType(type))
     }
     recipeTypeInit.stop()
   }
@@ -170,9 +189,14 @@ await fetchRecipeTypes()
   <div
     class="flex flex-col items-center px-4 py-12 gap-8"
   >
-    {{ recipeTypeChoices }}
     <div class="w-[90vw] p-4 shrink bg-muted rounded-2xl">
-      <UScrollArea v-slot="{ item }" :items="recipeTypeChoices" orientation="horizontal" class="w-full">
+      <UScrollArea
+        v-if="recipeTypeChoices.length != 0"
+        v-slot="{ item }"
+        :items="recipeTypeChoices"
+        orientation="horizontal"
+        class="w-full"
+      >
         <button
           class="w-17 p-2 border-2 rounded-t-2xl"
           :class="{

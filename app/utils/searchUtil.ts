@@ -1,19 +1,3 @@
-export function includeInIngredient(ingredients: string[], search: string[] | undefined): boolean {
-  if (typeof search === 'undefined') return true
-  if (search.length < 1) return true
-  if (search[0] === '') return true
-
-  const result = ingredients.find((rawIngredient) => {
-    const ingredientValues = new Ingredient(rawIngredient).value
-    return ingredientValues.some((ingredientValue) => {
-      return search.includes(
-        (ingredientValue.isTag ? '#' : '') + ingredientValue.value.full
-      )
-    })
-  })
-  return typeof result === 'string'
-}
-
 export function commonSearch(search: Search, namespace: string, path: string) {
   return (
     namespace.includes(search.mod_id ?? '')

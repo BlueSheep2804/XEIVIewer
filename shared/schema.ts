@@ -1,4 +1,5 @@
-import { pgTable, serial, text, integer } from 'drizzle-orm/pg-core'
+import { pgTable, serial, text, integer, jsonb } from 'drizzle-orm/pg-core'
+import type { RecipeEntry } from './tableTypes'
 
 export const tagsEntry = {
   id: serial().primaryKey().notNull(),
@@ -20,13 +21,13 @@ export const recipes = pgTable('recipes', {
   namespace: text().notNull(),
   path: text().notNull(),
   type: text().notNull(),
-  input: text().array().notNull(),
-  output: text().array().notNull()
+  input: jsonb().$type<RecipeEntry[][]>().notNull(),
+  output: jsonb().$type<RecipeEntry[][]>().notNull()
 })
 
 export const recipeType = pgTable('recipe_type', {
   id: text().primaryKey().notNull(),
-  catalyst: text().array().notNull(),
+  catalyst: jsonb().$type<RecipeEntry[]>().notNull(),
   inputSize: integer().notNull(),
   outputSize: integer().notNull(),
   titleKey: text().notNull(),
