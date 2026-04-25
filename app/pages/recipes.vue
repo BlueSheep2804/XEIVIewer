@@ -93,6 +93,7 @@ async function changeRecipeType(type: RecipeType | undefined) {
 
 async function clickRecipeType(type: string) {
   await changeRecipeType(getRecipeType(type))
+  virtualizerScroll(categorySelectTab, type)
   page.value = 1
 }
 
@@ -122,6 +123,18 @@ const total = computed(() => {
   }
 })
 const openCategorySelect = ref(false)
+const categorySelectTab = useTemplateRef('categorySelectTab')
+const categorySelect = useTemplateRef('categorySelect')
+
+function virtualizerScroll(scroll: typeof categorySelect, type: string) {
+  scroll.value?.virtualizer?.scrollToIndex(
+    recipeTypeChoices.value.findIndex(value => value.value === type)
+  )
+}
+
+function updateCategorySelect() {
+  virtualizerScroll(categorySelect, recipeType.value?.id ?? '')
+}
 
 // クエリ
 const isLookupEmpty = computed(() => (
@@ -194,9 +207,11 @@ await fetchRecipeTypes()
       <UScrollArea
         v-if="recipeTypeChoices.length != 0"
         v-slot="{ item }"
+        ref="categorySelectTab"
         :items="recipeTypeChoices"
+        virtualize
         orientation="horizontal"
-        class="w-full"
+        class="w-full h-21"
       >
         <button
           class="w-17 p-2 border-2 rounded-t-2xl"
@@ -226,9 +241,12 @@ await fetchRecipeTypes()
             <UScrollArea
               v-if="recipeTypeChoices.length != 0"
               v-slot="{ item }"
+              ref="categorySelect"
               :items="recipeTypeChoices"
+              virtualize
               orientation="vertical"
               class="h-full"
+              @vue:updated="updateCategorySelect"
             >
               <UButton
                 :color="recipeType?.id === item.value ? 'primary' : 'neutral'"
