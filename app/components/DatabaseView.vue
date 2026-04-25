@@ -1,41 +1,22 @@
 <script setup lang="ts">
-const route = useRoute()
-const router = useRouter()
-
 type Props = {
   entries: SearchDefine
   total: number
   itemsPerPageStep?: number
 }
 
-const { entries, total, itemsPerPageStep = 10 } = defineProps<Props>()
+const { entries, total, itemsPerPageStep } = defineProps<Props>()
 const search = defineModel<Search>('search', { required: true })
 const page = defineModel<number>('page', { required: true })
 const itemsPerPage = defineModel<number>('items-per-page', { required: true })
-
-watch(page, () => {
-  router.push({
-    query: {
-      ...route.query,
-      page: page.value
-    }
-  })
-})
 </script>
 
 <template>
   <UPageSection>
     <SearchComponent v-model:search="search" :entries="entries" />
-    <div class="flex">
-      <UFormField :label="$t('common.view_count')" class="grow">
-        <UInputNumber v-model="itemsPerPage" :step="itemsPerPageStep" class="w-32" />
-      </UFormField>
-      <p class="text-md font-medium">
-        {{ $t('common.results', { result: total }) }}
-      </p>
-    </div>
-    <Pagination v-model:page="page" :items-per-page="itemsPerPage" :total="total" />
-    <slot />
-    <Pagination v-model:page="page" :items-per-page="itemsPerPage" :total="total" />
+    <DatabaseInfo v-model="itemsPerPage" :items-per-page-step="itemsPerPageStep" :total="total" />
+    <CommonPagination v-model="page" :items-per-page="itemsPerPage" :total="total">
+      <slot />
+    </CommonPagination>
   </UPageSection>
 </template>

@@ -1,145 +1,283 @@
 <script setup lang="ts">
-import type { SelectItem } from '@nuxt/ui'
-import type { RecipeType, TagItem } from '~~/shared/tableTypes'
+import type { RecipeType } from '~~/shared/tableTypes'
+
+// 汎用
+type RecipeTypeItem = {
+  label: string
+  value: string
+  src: string
+}
 
 const route = useRoute()
+const router = useRouter()
+
 const { mcLang } = useMCLang()
-const { data: mods, execute: modsExecute } = await useMods()
-await modsExecute()
 
-const search: Ref<RecipeSearch> = ref({})
+// 初期化
+const recipeType = ref<RecipeType>()
+const recipeQuery = ref<RecipeQuery>({})
+const { data: allRecipeTypes, execute: fetchRecipeTypes, status: recipeTypeStatus } = await useRecipeTypes()
+const { data: recipes, execute: fetchRecipes } = await useRecipes(() => recipeType.value?.id)
+const { data: lookupRecipes, execute: fetchLookupRecipes } = await useRecipesWithQuery(recipeQuery)
 
-const searchEntries: ComputedRef<RecipeSearchDefine> = computed(() => ({
-  mod_id: {
-    label: $t('recipes.search.mod_id'),
-    items: []
-  },
-  registry_id: {
-    label: $t('recipes.search.registry_id'),
-    items: []
-  },
-  input_id: {
-    label: $t('recipes.search.input_id'),
-    items: []
-  },
-  output_id: {
-    label: $t('recipes.search.output_id'),
-    items: []
-  },
-  recipe_type: {
-    label: $t('recipes.search.recipe_type'),
-    items: recipeTypeChoices.value,
-    disableSearch: true
-  }
-}))
-
-const recipeTypeChoices = computed(() => {
-  const recipeTypes: SelectItem[] = []
-  const registeredMods: string[] = []
-  allRecipeTypes.value?.forEach((recipeType) => {
-    const identifier = Identifier.parse(recipeType.id)
-    const modId = identifier.namespace
-    if (!registeredMods.includes(modId)) {
-      registeredMods.push(modId)
-      recipeTypes.push(
-        {
-          type: 'separator'
-        },
-        {
-          label: getModNameByObject(modId, mods),
-          type: 'label'
-        }
-      )
-    }
-
-    const label = recipeType.titleKey !== '' && typeof mcLang.value !== 'undefined' && recipeType.titleKey in mcLang.value
-      ? mcLang.value[recipeType.titleKey]
-      : recipeType.titleFallback
-    recipeTypes.push({
-      label,
-      value: recipeType.id,
-      avatar: {
-        src: `/assets/recipe_type/${identifier.namespace}/${identifier.path}.png`,
-        ui: {
-          image: 'rounded-none',
-          root: 'rounded-none'
-        }
-      }
-    })
-  })
-  return [
-    {
-      label: $t('common.all'),
-      value: 'all'
-    },
-    ...recipeTypes
-  ]
+// レシピ
+const filteredLookupRecipes = computed(() => {
+  return (lookupRecipes.value ?? [])
+    .filter(value => value.type === recipeType.value?.id)
 })
 
-const { data: recipes } = await useFetch('/api/recipes', {
-  server: false,
-  lazy: true
-})
-const { data: allRecipeTypes } = await useFetch('/api/recipe_types', {
-  server: false,
-  lazy: true
-})
-
-const allRecipes = computed(() => {
-  return recipes.value?.filter((recipe) => {
-    const tempSearch = search.value
-    return (
-      commonSearch(tempSearch, recipe.namespace, recipe.path)
-      && includeInIngredient(recipe.input, [tempSearch.input_id ?? '', ...inputIncludeTags.value])
-      && includeInIngredient(recipe.output, [tempSearch.output_id ?? ''])
-      && (recipe.type === tempSearch.recipe_type || 'all' === (tempSearch.recipe_type ?? 'all'))
-    )
-  })
-})
 const displayedRecipes = computed(() => {
-  return allRecipes.value?.slice(
-    (page.value - 1) * itemsPerPage.value,
-    page.value * itemsPerPage.value
-  )
+  if (isLookupEmpty.value) {
+    return (recipes.value ?? [])
+      .slice(
+        (page.value - 1) * itemsPerPage.value,
+        page.value * itemsPerPage.value
+      )
+  } else {
+    return filteredLookupRecipes.value
+      .slice(
+        (page.value - 1) * itemsPerPage.value,
+        page.value * itemsPerPage.value
+      )
+  }
 })
 
-const { data: inputTags, execute: inputTagsRefresh } = await useApi(
-  () => `/api/tags/item?include_id=${search.value.input_id}`,
-  () => `tags.item:${search.value.input_id}`
-)
-await inputTagsRefresh()
-
-const inputIncludeTags = computed((): string[] => {
-  const tags = inputTags.value as Record<keyof TagItem, string>[]
-  return tags.map(value => `#${value.namespace}:${value.path}`)
-})
-
-const recipeLink = (namespace: string, path: string) => {
+function recipeLink(namespace: string, path: string) {
   return new Identifier(namespace, path).full
 }
-const getRecipeType = (id: string): RecipeType | undefined => {
-  return allRecipeTypes.value?.filter(value => value.id === id)[0]
+
+// レシピタイプ(カテゴリ)
+const recipeTypeChoices = computed(() => {
+  const recipeTypes: RecipeTypeItem[] = []
+
+  if (isLookupEmpty.value) {
+    allRecipeTypes.value?.forEach((recipeType) => {
+      recipeTypes.push(convertRecipeTypeItem(recipeType))
+    })
+  } else {
+    new Set(lookupRecipes.value?.map(value => value.type) ?? []).forEach((value) => {
+      const recipeType = allRecipeTypes.value?.find(recipeType => recipeType.id === value)
+      if (typeof recipeType !== 'undefined') {
+        recipeTypes.push(convertRecipeTypeItem(recipeType))
+      }
+    })
+  }
+  return recipeTypes
+})
+
+function convertRecipeTypeItem(recipeType: RecipeType): RecipeTypeItem {
+  const identifier = Identifier.parse(recipeType.id)
+  let label = recipeType.titleFallback
+  if (
+    recipeType.titleKey !== ''
+    && typeof mcLang.value !== 'undefined'
+    && recipeType.titleKey in mcLang.value
+  ) {
+    label = mcLang.value[recipeType.titleKey] ?? ''
+  }
+
+  return {
+    label,
+    value: recipeType.id,
+    src: `/assets/recipe_type/${identifier.namespace}/${identifier.path}.png`
+  }
 }
 
-const page = ref(Number.parseInt(route.query?.page?.toString() ?? '1'))
+async function changeRecipeType(type: RecipeType | undefined) {
+  recipeType.value = type
+  updateQuery()
+  if (isLookupEmpty.value) {
+    await fetchRecipes()
+  }
+}
+
+async function clickRecipeType(type: string) {
+  await changeRecipeType(getRecipeType(type))
+  virtualizerScroll(categorySelectTab, type)
+  page.value = 1
+}
+
+const getRecipeType = (type: string): RecipeType | undefined => {
+  if (!Array.isArray(allRecipeTypes.value)) return
+  return allRecipeTypes.value.find(value => (
+    'id' in value
+    && typeof value.id === 'string'
+    && value.id === type
+  ))
+}
+const recipeTypeLabel = computed(() => {
+  if (typeof recipeType.value === 'undefined') return $t('recipes.not_selected')
+  return recipeType.value.titleKey !== '' && typeof mcLang.value !== 'undefined' && recipeType.value.titleKey in mcLang.value
+    ? mcLang.value[recipeType.value.titleKey]
+    : recipeType.value.titleFallback
+})
+
+// ページ
+const page = ref(1)
 const itemsPerPage = useItemsPerPage('recipes', 10)
-const total = computed(() => allRecipes.value?.length ?? 0)
+const total = computed(() => {
+  if (isLookupEmpty.value) {
+    return recipes.value?.length ?? 0
+  } else {
+    return filteredLookupRecipes.value.length
+  }
+})
+const openCategorySelect = ref(false)
+const categorySelectTab = useTemplateRef('categorySelectTab')
+const categorySelect = useTemplateRef('categorySelect')
+
+function virtualizerScroll(scroll: typeof categorySelect, type: string) {
+  scroll.value?.virtualizer?.scrollToIndex(
+    recipeTypeChoices.value.findIndex(value => value.value === type)
+  )
+}
+
+function updateCategorySelect() {
+  virtualizerScroll(categorySelect, recipeType.value?.id ?? '')
+}
+
+// クエリ
+const isLookupEmpty = computed(() => (
+  typeof recipeQuery.value.input === 'undefined'
+  && typeof recipeQuery.value.output === 'undefined'
+))
+
+function getQuery(value: (string | null) | (string | null)[] | undefined): string | undefined {
+  if (value === null) return
+  if (Array.isArray(value)) return
+  return value
+}
+
+async function updateRecipeQuery() {
+  const now: RecipeQuery = {
+    input: getQuery(route.query.input),
+    output: getQuery(route.query.output)
+  }
+  if (!(
+    recipeQuery.value.input === now.input
+    && recipeQuery.value.output === now.output
+  )) {
+    recipeQuery.value.input = now.input
+    recipeQuery.value.output = now.output
+    if (!isLookupEmpty.value) {
+      await fetchLookupRecipes()
+      page.value = 1
+      if ((lookupRecipes.value?.length ?? 0) === 0) {
+        recipeType.value = undefined
+      }
+    }
+  }
+}
+await updateRecipeQuery()
+watch(route, async () => {
+  const type = getQuery(route.query.type)
+  if (typeof type === 'string') {
+    recipeType.value = getRecipeType(type)
+  }
+  await updateRecipeQuery()
+})
+
+function updateQuery() {
+  router.push({
+    query: {
+      ...route.query,
+      type: recipeType.value?.id
+    }
+  })
+}
+
+// データ取得
+const recipeTypeInit = watch(recipeTypeStatus, async () => {
+  if (recipeTypeStatus.value === 'success') {
+    const type = getQuery(route.query.type)
+    if (typeof type === 'string') {
+      changeRecipeType(getRecipeType(type))
+    }
+    recipeTypeInit.stop()
+  }
+})
+await fetchRecipeTypes()
 </script>
 
 <template>
-  <DatabaseView
-    v-model:search="search"
-    v-model:page="page"
-    v-model:items-per-page="itemsPerPage"
-    :entries="searchEntries"
-    :total="total"
+  <div
+    class="flex flex-col items-center px-4 py-12 gap-8"
   >
-    <div class="grid gap-4 justify-items-center items-center grid-cols-1 lg:grid-cols-2">
-      <template v-for="recipe in displayedRecipes" :key="recipe.id">
-        <NuxtLink :to="`/recipe/${recipeLink(recipe.namespace, recipe.path)}`" class="h-fit">
-          <RecipeView :recipe="recipe" :recipe-type="getRecipeType(recipe.type)" />
-        </NuxtLink>
-      </template>
+    <div class="w-[90vw] p-4 shrink bg-muted rounded-2xl">
+      <UScrollArea
+        v-if="recipeTypeChoices.length != 0"
+        v-slot="{ item }"
+        ref="categorySelectTab"
+        :items="recipeTypeChoices"
+        virtualize
+        orientation="horizontal"
+        class="w-full h-21"
+      >
+        <button
+          class="w-17 p-2 border-2 rounded-t-2xl"
+          :class="{
+            'bg-primary': recipeType?.id === item.value,
+            'hover:bg-primary/75': recipeType?.id === item.value,
+            'hover:bg-accented': recipeType?.id !== item.value
+          }"
+          @click="clickRecipeType(item.value)"
+        >
+          <img :src="item.src" class="aspect-square">
+        </button>
+      </UScrollArea>
+      <UPopover v-model:open="openCategorySelect">
+        <template #anchor>
+          <div class="flex justify-center">
+            <div class="flex items-center mt-4" @click="openCategorySelect = true">
+              <p class="text-2xl sm:text-3xl pointer-events-none">
+                {{ recipeTypeLabel }}
+              </p>
+              <UIcon name="lucide:chevron-down" size="xl" class="ml-2" />
+            </div>
+          </div>
+        </template>
+        <template #content>
+          <div class="size-64">
+            <UScrollArea
+              v-if="recipeTypeChoices.length != 0"
+              v-slot="{ item }"
+              ref="categorySelect"
+              :items="recipeTypeChoices"
+              virtualize
+              orientation="vertical"
+              class="h-full"
+              @vue:updated="updateCategorySelect"
+            >
+              <UButton
+                :color="recipeType?.id === item.value ? 'primary' : 'neutral'"
+                :variant="recipeType?.id === item.value ? 'subtle' : 'ghost'"
+                class="w-full h-14"
+                size="xl"
+                :avatar="{
+                  src: item.src,
+                  size: 'xl',
+                  ui: {
+                    image: 'rounded-none',
+                    root: 'rounded-none bg-transparent'
+                  }
+                }"
+                :label="item.label"
+                @click="clickRecipeType(item.value) ; openCategorySelect = false"
+              />
+            </UScrollArea>
+          </div>
+        </template>
+      </UPopover>
+      <DatabaseInfo v-model="itemsPerPage" :total="total" />
     </div>
-  </DatabaseView>
+    <CommonPagination v-model="page" :total="total" :items-per-page="itemsPerPage">
+      <div class="grid gap-4 justify-items-center items-center grid-cols-1 lg:grid-cols-2">
+        <template v-for="recipe in displayedRecipes" :key="recipe.id">
+          <NuxtLink :to="`/recipe/${recipeLink(recipe.namespace, recipe.path)}`" class="h-fit">
+            <RecipeView :recipe="recipe" />
+          </NuxtLink>
+        </template>
+      </div>
+    </CommonPagination>
+  </div>
 </template>

@@ -40,13 +40,13 @@ const linkUrl = computed(() => `/${entryType.simple}/${identifier.value.full}`)
 
 onKeyDown('u', (_) => {
   if (open.value) {
-    router.push(getRecipeInputUrl(identifier.value))
+    router.push(getRecipeInputUrl(entryType, identifier.value))
   }
 }, { dedupe: true })
 
 onKeyDown('r', (_) => {
   if (open.value) {
-    router.push(getRecipeOutputUrl(identifier.value))
+    router.push(getRecipeOutputUrl(entryType, identifier.value))
   }
 }, { dedupe: true })
 

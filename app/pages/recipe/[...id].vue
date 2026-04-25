@@ -7,7 +7,6 @@ const { data: recipeData } = await useFetch(() => dataUrl, {
   server: false
 })
 const recipe = computed(() => recipeData.value.recipes)
-const recipeType = computed(() => recipeData.value.recipe_type)
 </script>
 
 <template>
@@ -17,7 +16,7 @@ const recipeType = computed(() => recipeData.value.recipe_type)
         {{ resourceLocation.full }}
       </h1>
       <div class="flex justify-center">
-        <RecipeView :recipe="recipe" :recipe-type="recipeType" />
+        <RecipeView :recipe="recipe" />
       </div>
     </UPageSection>
   </div>

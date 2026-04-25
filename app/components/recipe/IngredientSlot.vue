@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import type { RecipeEntry } from '~~/shared/tableTypes'
+
 type Props = {
-  ingredient: string
+  ingredient: RecipeEntry[]
 }
 const { ingredient } = defineProps<Props>()
 
@@ -8,7 +10,7 @@ const ingredientList = new Ingredient(ingredient)
 
 const tagFetchList = await Promise.all(ingredientList.value.map((element) => {
   if (element.isTag) {
-    return useItemTag(element.value.full)
+    return useItemTag(element.entry.full)
   } else {
     return null
   }
@@ -35,10 +37,11 @@ function getTagEntryFromIndex(index: number): string[] {
   return []
 }
 
-const emptyEntry = {
+const emptyEntry: IngredientValue = {
   type: Identifier.parse('item'),
-  value: Identifier.parse('minecraft:air'),
-  count: 1,
+  entry: Identifier.parse('minecraft:air'),
+  amount: 1,
+  chance: 1,
   isTag: false
 }
 
@@ -49,7 +52,7 @@ const getFirstEntry = computed(() => {
     if (typeof entry === 'string') {
       return {
         ...first,
-        value: Identifier.parse(entry)
+        entry: Identifier.parse(entry)
       }
     } else return emptyEntry
   }
@@ -57,7 +60,7 @@ const getFirstEntry = computed(() => {
 })
 
 const getFirstEntryDataGetter = computed(() => {
-  return getEntryDataGetter(getFirstEntry.value.type, getFirstEntry.value.value)
+  return getEntryDataGetter(getFirstEntry.value.type, getFirstEntry.value.entry)
 })
 
 function getEntryDataGetter(type: Identifier, value: Identifier) {
@@ -75,14 +78,14 @@ const entryOverride = computed<EntryOverride>(() => {
   let entryId: string
   let modId: string
   if (isOnlyTag.value) {
-    const identifier = ingredientList.value[0]?.value
+    const identifier = ingredientList.value[0]?.entry
     entryName = $t('common.tag_ingredient', { tag: identifier?.path ?? '' })
     entryId = `#${identifier?.full ?? ''}`
     modId = identifier?.namespace ?? ''
   } else {
     entryName = $t('common.group')
-    entryId = `${getFirstEntry.value.value.full}, +${ingredientList.value.length - 1}`
-    modId = getFirstEntry.value.value.namespace
+    entryId = `${getFirstEntry.value.entry.full}, +${ingredientList.value.length - 1}`
+    modId = getFirstEntry.value.entry.namespace
   }
   return {
     entryName,
@@ -102,8 +105,8 @@ const open = ref(false)
           <UChip inset color="success" size="3xl">
             <EntryImage
               :entry-type="getFirstEntry.type"
-              :entry-id="getFirstEntry.value"
-              :count="getFirstEntry.count"
+              :entry-id="getFirstEntry.entry"
+              :count="getFirstEntry.amount"
               :show-link="false"
               :override="entryOverride"
               :get-entry-data="getFirstEntryDataGetter"
@@ -113,16 +116,16 @@ const open = ref(false)
       </template>
       <template #content>
         <p v-if="isOnlyTag" class="text-lg mb-2">
-          #{{ ingredientList.value[0]?.value.full }}
+          #{{ ingredientList.value[0]?.entry.full }}
         </p>
         <div class="grid grid-cols-3 gap-2">
-          <template v-for="(entry, index) in ingredientList.value" :key="entry.value">
+          <template v-for="(entry, index) in ingredientList.value" :key="entry.entry">
             <EntryImage
               v-if="!entry.isTag"
               :entry-type="entry.type"
-              :entry-id="entry.value"
-              :get-entry-data="getEntryDataGetter(entry.type, entry.value)"
-              :count="entry.count"
+              :entry-id="entry.entry"
+              :get-entry-data="getEntryDataGetter(entry.type, entry.entry)"
+              :count="entry.amount"
               class="max-w-17"
             />
             <template v-for="tag in getTagEntryFromIndex(index)" v-else :key="tag">
@@ -141,9 +144,9 @@ const open = ref(false)
   <div v-else class="inline-flex aspect-square">
     <EntryImage
       :entry-type="getFirstEntry.type"
-      :entry-id="getFirstEntry.value"
+      :entry-id="getFirstEntry.entry"
       :get-entry-data="getFirstEntryDataGetter"
-      :count="getFirstEntry.count"
+      :count="getFirstEntry.amount"
     />
   </div>
 </template>

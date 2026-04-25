@@ -5,8 +5,8 @@ const route = useRoute()
 const router = useRouter()
 const fluidId = ref(Identifier.parse(route.params.id))
 
-const recipeOutputUrl = computed(() => getRecipeOutputUrl(fluidId.value))
-const recipeInputUrl = computed(() => getRecipeInputUrl(fluidId.value))
+const recipeOutputUrl = computed(() => getRecipeOutputUrl(registryIdentifier.fluid, fluidId.value))
+const recipeInputUrl = computed(() => getRecipeInputUrl(registryIdentifier.fluid, fluidId.value))
 
 onKeyDown('r', (_) => {
   router.push(recipeOutputUrl.value)
