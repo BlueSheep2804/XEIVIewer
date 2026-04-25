@@ -203,7 +203,7 @@ await fetchRecipeTypes()
   <div
     class="flex flex-col items-center px-4 py-12 gap-8"
   >
-    <div class="w-[90vw] p-4 shrink bg-muted rounded-2xl">
+    <div class="w-[calc(100%-1rem)] p-4 shrink bg-muted rounded-2xl">
       <UScrollArea
         v-if="recipeTypeChoices.length != 0"
         v-slot="{ item }"
@@ -237,7 +237,7 @@ await fetchRecipeTypes()
           </div>
         </template>
         <template #content>
-          <div class="size-64">
+          <div class="size-64 sm:w-lg sm:h-72">
             <UScrollArea
               v-if="recipeTypeChoices.length != 0"
               v-slot="{ item }"
