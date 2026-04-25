@@ -105,7 +105,7 @@ const getRecipeType = (type: string): RecipeType | undefined => {
   ))
 }
 const recipeTypeLabel = computed(() => {
-  if (typeof recipeType.value === 'undefined') return ''
+  if (typeof recipeType.value === 'undefined') return $t('recipes.not_selected')
   return recipeType.value.titleKey !== '' && typeof mcLang.value !== 'undefined' && recipeType.value.titleKey in mcLang.value
     ? mcLang.value[recipeType.value.titleKey]
     : recipeType.value.titleFallback
@@ -121,6 +121,7 @@ const total = computed(() => {
     return filteredLookupRecipes.value.length
   }
 })
+const openCategorySelect = ref(false)
 
 // クエリ
 const isLookupEmpty = computed(() => (
@@ -209,11 +210,46 @@ await fetchRecipeTypes()
           <img :src="item.src" class="aspect-square">
         </button>
       </UScrollArea>
-      <div class="flex justify-center">
-        <p class="text-2xl sm:text-3xl mt-4">
-          {{ recipeTypeLabel }}
-        </p>
-      </div>
+      <UPopover v-model:open="openCategorySelect">
+        <template #anchor>
+          <div class="flex justify-center">
+            <div class="flex items-center mt-4" @click="openCategorySelect = true">
+              <p class="text-2xl sm:text-3xl pointer-events-none">
+                {{ recipeTypeLabel }}
+              </p>
+              <UIcon name="lucide:chevron-down" size="xl" class="ml-2" />
+            </div>
+          </div>
+        </template>
+        <template #content>
+          <div class="size-64">
+            <UScrollArea
+              v-if="recipeTypeChoices.length != 0"
+              v-slot="{ item }"
+              :items="recipeTypeChoices"
+              orientation="vertical"
+              class="h-full"
+            >
+              <UButton
+                :color="recipeType?.id === item.value ? 'primary' : 'neutral'"
+                :variant="recipeType?.id === item.value ? 'subtle' : 'ghost'"
+                class="w-full h-14"
+                size="xl"
+                :avatar="{
+                  src: item.src,
+                  size: 'xl',
+                  ui: {
+                    image: 'rounded-none',
+                    root: 'rounded-none bg-transparent'
+                  }
+                }"
+                :label="item.label"
+                @click="clickRecipeType(item.value) ; openCategorySelect = false"
+              />
+            </UScrollArea>
+          </div>
+        </template>
+      </UPopover>
       <DatabaseInfo v-model="itemsPerPage" :total="total" />
     </div>
     <CommonPagination v-model="page" :total="total" :items-per-page="itemsPerPage">

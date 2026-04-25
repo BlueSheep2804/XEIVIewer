@@ -48,7 +48,8 @@
       "input_id": "Ingredient",
       "output_id": "Output",
       "recipe_type": "Recipe Type"
-    }
+    },
+    "not_selected": "Not selected"
   },
   "tags": {
     "title": "Tags",

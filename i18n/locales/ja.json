@@ -48,7 +48,8 @@
       "input_id": "材料",
       "output_id": "完成品",
       "recipe_type": "レシピタイプ"
-    }
+    },
+    "not_selected": "未選択"
   },
   "tags": {
     "title": "タグ",
