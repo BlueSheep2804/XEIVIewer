@@ -27,6 +27,11 @@ useSeoMeta({
 
 const navigationItems = computed<NavigationMenuItem[]>(() => [
   {
+    label: $t('recipes.title'),
+    icon: 'lucide:grid-3x3',
+    to: '/'
+  },
+  {
     label: $t('items.title'),
     icon: 'lucide:wand',
     to: '/items'
@@ -35,11 +40,6 @@ const navigationItems = computed<NavigationMenuItem[]>(() => [
     label: $t('fluids.title'),
     icon: 'lucide:paint-bucket',
     to: '/fluids'
-  },
-  {
-    label: $t('recipes.title'),
-    icon: 'lucide:grid-3x3',
-    to: '/recipes'
   },
   {
     label: $t('tags.title'),
