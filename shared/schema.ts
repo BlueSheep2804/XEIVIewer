@@ -62,3 +62,12 @@ export const fluids = pgTable('fluids', {
   descriptionId: text().notNull(),
   temperature: integer().notNull()
 })
+
+export const ingredientTable = pgTable('ingredient', {
+  id: serial().primaryKey().notNull(),
+  type: text().notNull(),
+  uniqueId: text().notNull(),
+  namespace: text().notNull(),
+  path: text().notNull(),
+  descriptionId: text().notNull()
+})

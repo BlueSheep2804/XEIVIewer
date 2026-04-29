@@ -3,19 +3,18 @@ import { onKeyDown } from '@vueuse/core'
 import type { CommonEntry } from '~~/shared/tableTypes'
 
 type Props = {
-  entryType: Identifier
+  entryType: string
   entryId?: Identifier
   entry?: CommonEntry
-  getEntryData: () => Promise<CommonEntry>
   count?: number
   showLink?: boolean
   override?: EntryOverride
 }
-const { entryType, entryId, entry, getEntryData, count = 1, showLink = true, override = {} } = defineProps<Props>()
+const { entryType, entryId, entry, count = 1, showLink = true, override = {} } = defineProps<Props>()
 
 const identifier = computed(() => {
   if (typeof entryId === 'undefined') {
-    return new Identifier(entry?.namespace ?? '', entry?.name ?? '')
+    return new Identifier(entry?.namespace ?? '', entry?.path ?? '')
   } else {
     return entryId
   }
@@ -35,8 +34,8 @@ const isNone = computed(() => (
     && typeof entryId === 'undefined'
   )
 ))
-const imageUrl = computed(() => `/assets/${entryType.simple}s/${identifier.value.namespace}/${identifier.value.path}.png`)
-const linkUrl = computed(() => `/${entryType.simple}/${identifier.value.full}`)
+const imageUrl = computed(() => `/assets/${entryType}/${identifier.value.namespace}/${identifier.value.path}.png`)
+const linkUrl = computed(() => `/ingredient/${entryType}/${identifier.value.full}`)
 
 onKeyDown('u', (_) => {
   if (open.value) {
@@ -50,15 +49,15 @@ onKeyDown('r', (_) => {
   }
 }, { dedupe: true })
 
-const entryData = ref(entry)
+const { data: entryData, status: entryFetchStatus, execute: entryFetch } = await useIngredient(entryType, entryId?.full ?? '')
 
 const open = ref(false)
 
 const showPopover = async () => {
   if (isNone.value) return
   open.value = true
-  if (typeof entryData.value === 'undefined' && typeof getEntryData !== 'undefined') {
-    entryData.value = await getEntryData()
+  if (typeof entry === 'undefined' && entryFetchStatus.value !== 'success') {
+    await entryFetch()
   }
   if (typeof modDisplayName.value === 'undefined') {
     modDisplayName.value = await getModName(identifier.value.namespace)
@@ -83,7 +82,12 @@ const tooltipItemName = computed(() => {
   if ('entryName' in override && typeof override.entryName === 'string') {
     return override.entryName
   }
-  return getEntryName(entryData.value?.descriptionId)
+
+  if (typeof entry !== 'undefined') {
+    return getEntryName(entry.descriptionId)
+  } else {
+    return getEntryName(entryData.value?.descriptionId)
+  }
 })
 const toolTipItemId = computed(() => {
   if ('entryId' in override && typeof override.entryId === 'string') {

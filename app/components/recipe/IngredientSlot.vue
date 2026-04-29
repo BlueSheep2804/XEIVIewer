@@ -38,7 +38,7 @@ function getTagEntryFromIndex(index: number): string[] {
 }
 
 const emptyEntry: IngredientValue = {
-  type: Identifier.parse('item'),
+  type: 'item_stack',
   entry: Identifier.parse('minecraft:air'),
   amount: 1,
   chance: 1,
@@ -58,14 +58,6 @@ const getFirstEntry = computed(() => {
   }
   return first ?? emptyEntry
 })
-
-const getFirstEntryDataGetter = computed(() => {
-  return getEntryDataGetter(getFirstEntry.value.type, getFirstEntry.value.entry)
-})
-
-function getEntryDataGetter(type: Identifier, value: Identifier) {
-  return () => entryGetter(type.full)(value)
-}
 
 const isMultipleEntry = computed(() => {
   return ingredientList.value.length > 1 || ingredientList.value[0]?.isTag
@@ -109,7 +101,6 @@ const open = ref(false)
               :count="getFirstEntry.amount"
               :show-link="false"
               :override="entryOverride"
-              :get-entry-data="getFirstEntryDataGetter"
             />
           </UChip>
         </a>
@@ -124,7 +115,6 @@ const open = ref(false)
               v-if="!entry.isTag"
               :entry-type="entry.type"
               :entry-id="entry.entry"
-              :get-entry-data="getEntryDataGetter(entry.type, entry.entry)"
               :count="entry.amount"
               class="max-w-17"
             />
@@ -132,7 +122,6 @@ const open = ref(false)
               <EntryImage
                 :entry-type="entry.type"
                 :entry-id="Identifier.parse(tag)"
-                :get-entry-data="getEntryDataGetter(entry.type, Identifier.parse(tag))"
                 class="max-w-17"
               />
             </template>
@@ -145,7 +134,6 @@ const open = ref(false)
     <EntryImage
       :entry-type="getFirstEntry.type"
       :entry-id="getFirstEntry.entry"
-      :get-entry-data="getFirstEntryDataGetter"
       :count="getFirstEntry.amount"
     />
   </div>

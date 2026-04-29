@@ -2,7 +2,7 @@ import type { RecipeEntry } from '../tableTypes'
 import { Identifier } from './identifier'
 
 // eslint-disable-next-line no-useless-escape
-const regex = /^(?:(?<count>\d+)x )?(?:(?<isTag>#)?(?<type>[0-9a-z_.\/:-]+);?)(?<id>[0-9a-z_.\/-]+:[0-9a-z_.\/-]+)$/
+const regex = /^(?:(?<count>\d+)x )?(?:(?<isTag>#)?(?<type>.+);)(?<id>[0-9a-z_.\/-]+:[0-9a-z_.\/-]+)$/
 
 export class Ingredient {
   public value: IngredientValue[]
@@ -17,7 +17,7 @@ export class Ingredient {
 }
 
 export interface IngredientValue {
-  type: Identifier
+  type: string
   entry: Identifier
   isTag: boolean
   amount: number
@@ -28,11 +28,11 @@ export function parseIngredientValue(entry: string | RecipeEntry): IngredientVal
   if (typeof entry === 'string') {
     const matchGroup = entry.match(regex)?.groups
     const count = Number.parseInt(matchGroup?.count ?? '1')
-    const type = matchGroup?.type ?? 'item'
+    const type = matchGroup?.type ?? 'item_stack'
     const id = matchGroup?.id ?? 'xeiexporter:unknown'
     const isTag = (matchGroup?.isTag ?? '') !== ''
     return {
-      type: Identifier.parse(type),
+      type,
       entry: Identifier.parse(id),
       isTag,
       amount: count,
@@ -40,7 +40,7 @@ export function parseIngredientValue(entry: string | RecipeEntry): IngredientVal
     }
   } else {
     return {
-      type: Identifier.parse(entry.type),
+      type: entry.type,
       entry: Identifier.parse(entry.entry.replace('#', '')),
       isTag: entry.entry.startsWith('#'),
       amount: entry.amount ?? 1,

@@ -1,7 +1,7 @@
-export function getRecipeInputUrl(entryType: Identifier, input: Identifier) {
-  return `/?input=${entryType.simple};${input.full}`
+export function getRecipeInputUrl(entryType: string, input: Identifier) {
+  return `/?input=${entryType};${input.full}`
 }
 
-export function getRecipeOutputUrl(entryType: Identifier, output: Identifier) {
-  return `/?output=${entryType.simple};${output.full}`
+export function getRecipeOutputUrl(entryType: string, output: Identifier) {
+  return `/?output=${entryType};${output.full}`
 }
