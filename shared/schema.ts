@@ -71,3 +71,11 @@ export const ingredientTable = pgTable('ingredient', {
   path: text().notNull(),
   descriptionId: text().notNull()
 })
+
+export const tagTable = pgTable('tag', {
+  id: serial().primaryKey().notNull(),
+  type: text().notNull(),
+  namespace: text().notNull(),
+  path: text().notNull(),
+  entry: text().array().notNull()
+})

@@ -10,7 +10,7 @@ const ingredientList = new Ingredient(ingredient)
 
 const tagFetchList = await Promise.all(ingredientList.value.map((element) => {
   if (element.isTag) {
-    return useItemTag(element.entry.full)
+    return useTag(element.type, element.entry.full)
   } else {
     return null
   }
