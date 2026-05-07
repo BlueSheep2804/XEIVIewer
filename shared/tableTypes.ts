@@ -15,6 +15,7 @@ export type CommonEntry = {
   namespace: string
   path: string
   descriptionId: string
+  uniqueId: string
 }
 
 export type RecipeEntry = {

@@ -40,6 +40,13 @@
     "translation_key": "Translation key",
     "temperature": "Temperature"
   },
+  "ingredient": {
+    "title": "Ingredients",
+    "search": {
+      "mod_id": "Mod ID",
+      "registry_id": "Registry ID"
+    }
+  },
   "recipes": {
     "title": "Recipes",
     "search": {

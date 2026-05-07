@@ -9,6 +9,31 @@ export const useFluid = async (itemId: string) => {
   return await useApi(`/api/fluid/${itemId}`, `fluid#${itemId}`)
 }
 
+export const useIngredientTypes = async () => {
+  return await useFetch(
+    '/api/ingredient_types',
+    {
+      key: 'ingredientTypes',
+      ...defaultApiFetchOptions,
+      immediate: true
+    }
+  )
+}
+
+export const useIngredients = async (
+  ingredientType: string | (() => string)
+): Promise<AsyncData<IngredientEntry[], unknown>> => {
+  const url = () => `/api/ingredient/${getProviderValue(ingredientType)}`
+  const key = () => getProviderValue(ingredientType)
+  return await useFetch(
+    url,
+    {
+      key,
+      ...defaultApiFetchOptions
+    }
+  )
+}
+
 export const useIngredient = async (
   ingredientType: string | (() => string),
   ingredientId: string | (() => string)

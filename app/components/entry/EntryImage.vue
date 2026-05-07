@@ -34,7 +34,18 @@ const isNone = computed(() => (
     && typeof entryId === 'undefined'
   )
 ))
-const imageUrl = computed(() => `/assets/${entryType}/${identifier.value.namespace}/${identifier.value.path}.png`)
+const imageUrl = computed(() => {
+  if (typeof entry !== 'undefined') {
+    if (entry.uniqueId !== '') {
+      const split = entry.uniqueId.split(':')
+      if (split.length > 2) {
+        const pathArray = [split[0], split[1], split.slice(2).join(';').replaceAll(/["?#*<>]/g, '-')]
+        return `/assets/${entryType}/${pathArray.join('/')}.png`
+      }
+    }
+  }
+  return `/assets/${entryType}/${identifier.value.namespace}/${identifier.value.path}.png`
+})
 const linkUrl = computed(() => `/ingredient/${entryType}/${identifier.value.full}`)
 
 onKeyDown('u', (_) => {

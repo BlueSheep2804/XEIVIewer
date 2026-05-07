@@ -63,6 +63,11 @@ export const fluids = pgTable('fluids', {
   temperature: integer().notNull()
 })
 
+export const ingredientType = pgTable('ingredient_type', {
+  id: text().primaryKey().notNull(),
+  translationKey: text('translation_key').notNull()
+})
+
 export const ingredientTable = pgTable('ingredient', {
   id: serial().primaryKey().notNull(),
   type: text().notNull(),

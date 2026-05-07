@@ -40,6 +40,13 @@
     "translation_key": "翻訳キー",
     "temperature": "温度"
   },
+  "ingredient": {
+    "title": "材料",
+    "search": {
+      "mod_id": "Mod ID",
+      "registry_id": "レジストリID"
+    }
+  },
   "recipes": {
     "title": "レシピ",
     "search": {

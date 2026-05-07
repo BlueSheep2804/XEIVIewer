@@ -25,11 +25,24 @@ useSeoMeta({
   ogDescription: description
 })
 
+const { reload } = useMCLang()
+await reload()
+
+const { data: ingredientTypes } = await useIngredientTypes()
+
 const navigationItems = computed<NavigationMenuItem[]>(() => [
   {
     label: $t('recipes.title'),
     icon: 'lucide:grid-3x3',
     to: '/'
+  },
+  {
+    label: $t('ingredient.title'),
+    icon: 'lucide:wand',
+    children: ingredientTypes.value?.map(i => ({
+      label: i.translationKey !== '' ? getTranslation(i.translationKey) : i.id,
+      to: `/ingredient/${i.id}`
+    }))
   },
   {
     label: $t('items.title'),
