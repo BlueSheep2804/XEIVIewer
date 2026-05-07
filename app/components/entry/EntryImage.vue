@@ -142,6 +142,8 @@ const toolTipModId = computed(() => {
   <UPopover
     :open="open"
     :reference="reference"
+    :open-delay="0"
+    :close-delay="0"
     :content="{ side: 'top', sideOffset: 24, updatePositionStrategy: 'always' }"
   >
     <div
@@ -165,7 +167,7 @@ const toolTipModId = computed(() => {
     </div>
 
     <template #content>
-      <div class="p-2">
+      <div class="p-2 pointer-events-none">
         <p>{{ tooltipItemName }}</p>
         <p class="text-muted">
           {{ toolTipItemId }}
