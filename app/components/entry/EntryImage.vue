@@ -5,12 +5,13 @@ import type { CommonEntry } from '~~/shared/tableTypes'
 type Props = {
   entryType: string
   entryId?: Identifier
+  uniqueId?: string
   entry?: CommonEntry
   count?: number
   showLink?: boolean
   override?: EntryOverride
 }
-const { entryType, entryId, entry, count = 1, showLink = true, override = {} } = defineProps<Props>()
+const { entryType, entryId, uniqueId, entry, count = 1, showLink = true, override = {} } = defineProps<Props>()
 
 const identifier = computed(() => {
   if (typeof entryId === 'undefined') {
@@ -34,14 +35,28 @@ const isNone = computed(() => (
     && typeof entryId === 'undefined'
   )
 ))
+
+function uniqueIdToPath(id: string): string | undefined {
+  const split = id.split(':')
+  if (split.length > 2) {
+    const pathArray = [split[0], split[1], split.slice(2).join(';').replaceAll(/["?#*<>]/g, '-')]
+    return pathArray.join('/')
+  }
+}
+
 const imageUrl = computed(() => {
   if (typeof entry !== 'undefined') {
     if (entry.uniqueId !== '') {
-      const split = entry.uniqueId.split(':')
-      if (split.length > 2) {
-        const pathArray = [split[0], split[1], split.slice(2).join(';').replaceAll(/["?#*<>]/g, '-')]
-        return `/assets/${entryType}/${pathArray.join('/')}.png`
+      const path = uniqueIdToPath(entry.uniqueId)
+      if (typeof path !== 'undefined') {
+        return `/assets/${entryType}/${path}.png`
       }
+    }
+  }
+  if (typeof uniqueId !== 'undefined' && uniqueId !== '') {
+    const path = uniqueIdToPath(uniqueId)
+    if (typeof path !== 'undefined') {
+      return `/assets/${entryType}/${path}.png`
     }
   }
   return `/assets/${entryType}/${identifier.value.namespace}/${identifier.value.path}.png`
@@ -60,7 +75,15 @@ onKeyDown('r', (_) => {
   }
 }, { dedupe: true })
 
-const { data: entryData, status: entryFetchStatus, execute: entryFetch } = await useIngredient(entryType, entryId?.full ?? '')
+const {
+  data: entryData,
+  status: entryFetchStatus,
+  execute: entryFetch
+} = await useIngredient(
+  entryType,
+  typeof uniqueId !== 'undefined' && uniqueId !== '' ? uniqueId : entryId?.full ?? '',
+  typeof uniqueId !== 'undefined' && uniqueId !== ''
+)
 
 const open = ref(false)
 

@@ -19,6 +19,7 @@ export class Ingredient {
 export interface IngredientValue {
   type: string
   entry: Identifier
+  uniqueId: string
   isTag: boolean
   amount: number
   chance: number
@@ -34,6 +35,7 @@ export function parseIngredientValue(entry: string | RecipeEntry): IngredientVal
     return {
       type,
       entry: Identifier.parse(id),
+      uniqueId: '',
       isTag,
       amount: count,
       chance: 1
@@ -42,6 +44,7 @@ export function parseIngredientValue(entry: string | RecipeEntry): IngredientVal
     return {
       type: entry.type,
       entry: Identifier.parse(entry.entry.replace('#', '')),
+      uniqueId: entry.uniqueId ?? '',
       isTag: entry.entry.startsWith('#'),
       amount: entry.amount ?? 1,
       chance: entry.chance ?? 1

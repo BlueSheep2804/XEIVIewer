@@ -21,6 +21,7 @@ export type CommonEntry = {
 export type RecipeEntry = {
   type: string
   entry: string
+  uniqueId?: string
   amount?: number
   chance?: number
 }

@@ -36,9 +36,13 @@ export const useIngredients = async (
 
 export const useIngredient = async (
   ingredientType: string | (() => string),
-  ingredientId: string | (() => string)
+  ingredientId: string | (() => string),
+  idAsUniqueId: boolean = false
 ): Promise<AsyncData<IngredientEntry, unknown>> => {
-  const url = () => `/api/ingredient/${getProviderValue(ingredientType)}/${getProviderValue(ingredientId)}`
+  let url = () => `/api/ingredient/${getProviderValue(ingredientType)}/${getProviderValue(ingredientId)}`
+  if (idAsUniqueId) {
+    url = () => `/api/ingredient/${getProviderValue(ingredientType)}/unique_id/${getProviderValue(ingredientId)}`
+  }
   const key = () => `${getProviderValue(ingredientType)}#${getProviderValue(ingredientId)}`
   return await useFetch(
     url,

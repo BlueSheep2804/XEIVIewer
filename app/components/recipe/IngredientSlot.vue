@@ -40,6 +40,7 @@ function getTagEntryFromIndex(index: number): string[] {
 const emptyEntry: IngredientValue = {
   type: 'item_stack',
   entry: Identifier.parse('minecraft:air'),
+  uniqueId: '',
   amount: 1,
   chance: 1,
   isTag: false
@@ -98,6 +99,7 @@ const open = ref(false)
             <EntryImage
               :entry-type="getFirstEntry.type"
               :entry-id="getFirstEntry.entry"
+              :unique-id="getFirstEntry.uniqueId"
               :count="getFirstEntry.amount"
               :show-link="false"
               :override="entryOverride"
@@ -115,6 +117,7 @@ const open = ref(false)
               v-if="!entry.isTag"
               :entry-type="entry.type"
               :entry-id="entry.entry"
+              :unique-id="entry.uniqueId"
               :count="entry.amount"
               class="max-w-17"
             />
@@ -134,6 +137,7 @@ const open = ref(false)
     <EntryImage
       :entry-type="getFirstEntry.type"
       :entry-id="getFirstEntry.entry"
+      :unique-id="getFirstEntry.uniqueId"
       :count="getFirstEntry.amount"
     />
   </div>
