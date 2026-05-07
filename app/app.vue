@@ -44,32 +44,22 @@ const navigationItems = computed<NavigationMenuItem[]>(() => [
       to: `/ingredient/${i.id}`
     }))
   },
-  {
-    label: $t('items.title'),
-    icon: 'lucide:wand',
-    to: '/items'
-  },
-  {
-    label: $t('fluids.title'),
-    icon: 'lucide:paint-bucket',
-    to: '/fluids'
-  },
-  {
-    label: $t('tags.title'),
-    icon: 'lucide:tags',
-    children: [
-      {
-        label: $t('tags.item.title'),
-        icon: 'lucide:wand',
-        to: '/tags/item'
-      },
-      {
-        label: $t('tags.fluid.title'),
-        icon: 'lucide:paint-bucket',
-        to: '/tags/fluid'
-      }
-    ]
-  },
+  // {
+  //   label: $t('tags.title'),
+  //   icon: 'lucide:tags',
+  //   children: [
+  //     {
+  //       label: $t('tags.item.title'),
+  //       icon: 'lucide:wand',
+  //       to: '/tags/item'
+  //     },
+  //     {
+  //       label: $t('tags.fluid.title'),
+  //       icon: 'lucide:paint-bucket',
+  //       to: '/tags/fluid'
+  //     }
+  //   ]
+  // },
   {
     label: $t('mods.title'),
     icon: 'lucide:coffee',

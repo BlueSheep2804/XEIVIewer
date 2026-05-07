@@ -1,21 +1,6 @@
 import { pgTable, serial, text, integer, jsonb } from 'drizzle-orm/pg-core'
 import type { RecipeEntry } from './tableTypes'
 
-export const tagsEntry = {
-  id: serial().primaryKey().notNull(),
-  namespace: text().notNull(),
-  path: text().notNull(),
-  entry: text().array().notNull()
-}
-
-export const tagsItem = pgTable('tags_item', {
-  ...tagsEntry
-})
-
-export const tagsFluid = pgTable('tags_fluid', {
-  ...tagsEntry
-})
-
 export const recipes = pgTable('recipes', {
   id: serial().primaryKey().notNull(),
   namespace: text().notNull(),
@@ -43,24 +28,6 @@ export const mods = pgTable('mods', {
   description: text().notNull(),
   url: text().notNull(),
   license: text().notNull()
-})
-
-export const items = pgTable('items', {
-  id: serial().primaryKey().notNull(),
-  namespace: text().notNull(),
-  name: text().notNull(),
-  descriptionId: text().notNull(),
-  maxDamage: integer().notNull(),
-  rarity: text().notNull(),
-  class: text().notNull()
-})
-
-export const fluids = pgTable('fluids', {
-  id: serial().primaryKey().notNull(),
-  namespace: text().notNull(),
-  name: text().notNull(),
-  descriptionId: text().notNull(),
-  temperature: integer().notNull()
 })
 
 export const ingredientType = pgTable('ingredient_type', {

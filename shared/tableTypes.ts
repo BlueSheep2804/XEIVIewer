@@ -1,11 +1,8 @@
-import type { fluids, ingredientTable, items, mods, recipes, recipeType, tagsItem, tagTable } from './schema'
+import type { ingredientTable, mods, recipes, recipeType, tagTable } from './schema'
 
 export type Mod = typeof mods.$inferSelect
-export type Item = typeof items.$inferSelect
 export type Recipe = typeof recipes.$inferSelect
 export type RecipeType = typeof recipeType.$inferSelect
-export type TagItem = typeof tagsItem.$inferSelect
-export type Fluid = typeof fluids.$inferSelect
 export type IngredientEntry = typeof ingredientTable.$inferSelect
 export type Tag = typeof tagTable.$inferSelect
 
