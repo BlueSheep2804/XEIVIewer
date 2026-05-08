@@ -22,6 +22,10 @@ const identifier = computed(() => {
 })
 const modDisplayName: Ref<string | undefined> = ref()
 
+const { data: ingredientTypes, execute: fetchIngredientTypes } = await useIngredientTypes()
+await fetchIngredientTypes()
+const ingredientTypeInfo = ingredientTypes.value?.find(value => value.id === entryType)
+
 const { data: mods, execute } = await useMods()
 await execute()
 
@@ -62,6 +66,33 @@ const imageUrl = computed(() => {
   return `/assets/${entryType}/${identifier.value.namespace}/${identifier.value.path}.png`
 })
 const linkUrl = computed(() => `/ingredient/${entryType}/${identifier.value.full}`)
+
+const displayCount = computed(() => {
+  if (ingredientTypeInfo?.isMilliUnit ?? false) {
+    if (count >= (10 ** 15)) {
+      return toExponential(count) + 'B'
+    } else if (count >= (10 ** 12)) {
+      return Math.floor(count / (10 ** 12)) + 'GB'
+    } else if (count >= (10 ** 9)) {
+      return Math.floor(count / (10 ** 9)) + 'MB'
+    } else if (count >= (10 ** 6)) {
+      return Math.floor(count / (10 ** 6)) + 'KB'
+    } else if (count >= (10 ** 3)) {
+      return Math.floor(count / (10 ** 3)) + 'B'
+    }
+    return count + 'mB'
+  }
+  if (count >= (10 ** 12)) {
+    return toExponential(count)
+  } else if (count >= (10 ** 9)) {
+    return Math.floor(count / (10 ** 9)) + 'G'
+  } else if (count >= (10 ** 6)) {
+    return Math.floor(count / (10 ** 6)) + 'M'
+  } else if (count >= (10 ** 3)) {
+    return Math.floor(count / (10 ** 3)) + 'K'
+  }
+  return count.toString()
+})
 
 onKeyDown('u', (_) => {
   if (open.value) {
@@ -161,7 +192,7 @@ const toolTipModId = computed(() => {
       <img v-else :src="imageUrl" style="image-rendering: pixelated;">
       <div v-if="count !== 1" class="absolute pointer-events-none p-0.5 m-1 rounded bg-gray-900/40 backdrop-blur-md">
         <p class="text-white text-sm">
-          {{ count }}
+          {{ displayCount }}
         </p>
       </div>
     </div>
@@ -169,6 +200,10 @@ const toolTipModId = computed(() => {
     <template #content>
       <div class="p-2 pointer-events-none">
         <p>{{ tooltipItemName }}</p>
+        <p v-if="count.toString() !== displayCount" class="text-toned text-sm">
+          {{ count.toLocaleString() }}
+          {{ (ingredientTypeInfo?.isMilliUnit ?? false) ? 'mB' : '' }}
+        </p>
         <p class="text-muted">
           {{ toolTipItemId }}
         </p>

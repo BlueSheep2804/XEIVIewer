@@ -1,4 +1,4 @@
-import { pgTable, serial, text, integer, jsonb } from 'drizzle-orm/pg-core'
+import { pgTable, serial, text, integer, jsonb, boolean } from 'drizzle-orm/pg-core'
 import type { RecipeEntry } from './tableTypes'
 
 export const recipes = pgTable('recipes', {
@@ -32,7 +32,8 @@ export const mods = pgTable('mods', {
 
 export const ingredientType = pgTable('ingredient_type', {
   id: text().primaryKey().notNull(),
-  translationKey: text('translation_key').notNull()
+  translationKey: text('translation_key').notNull(),
+  isMilliUnit: boolean().notNull()
 })
 
 export const ingredientTable = pgTable('ingredient', {
