@@ -5,7 +5,6 @@ import { db } from '#server/utils/db'
 export default cachedEventHandler(async (event) => {
   const ingredientType = getRouterParam(event, 'type') ?? ''
   const id = getRouterParam(event, 'id', { decode: true }) ?? ''
-  console.log(id)
   const result = await db
     .select()
     .from(ingredientTable)
