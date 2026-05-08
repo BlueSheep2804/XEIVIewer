@@ -86,32 +86,28 @@ const entryOverride = computed<EntryOverride>(() => {
     modId
   }
 })
-
-const open = ref(false)
 </script>
 
 <template>
   <div v-if="isMultipleEntry" class="inline-flex aspect-square">
-    <UPopover v-model:open="open" arrow :ui="{ content: 'p-4' }">
+    <PopoverOrDrawer>
       <template #anchor>
-        <a v-if="getFirstEntry" href="#" @click.prevent="open = true">
-          <UChip inset color="success" size="3xl">
-            <EntryImage
-              :entry-type="getFirstEntry.type"
-              :entry-id="getFirstEntry.entry"
-              :unique-id="getFirstEntry.uniqueId"
-              :count="getFirstEntry.amount"
-              :show-link="false"
-              :override="entryOverride"
-            />
-          </UChip>
-        </a>
+        <UChip inset color="success" size="3xl">
+          <EntryImage
+            :entry-type="getFirstEntry.type"
+            :entry-id="getFirstEntry.entry"
+            :unique-id="getFirstEntry.uniqueId"
+            :count="getFirstEntry.amount"
+            :show-link="false"
+            :override="entryOverride"
+          />
+        </UChip>
       </template>
       <template #content>
         <p v-if="isOnlyTag" class="text-lg mb-2">
           #{{ ingredientList.value[0]?.entry.full }}
         </p>
-        <div class="grid grid-cols-3 gap-2">
+        <div class="grid grid-cols-4 md:grid-cols-6 gap-2 justify-items-center">
           <template v-for="(entry, index) in ingredientList.value" :key="entry.entry">
             <EntryImage
               v-if="!entry.isTag"
@@ -131,7 +127,7 @@ const open = ref(false)
           </template>
         </div>
       </template>
-    </UPopover>
+    </PopoverOrDrawer>
   </div>
   <div v-else class="inline-flex aspect-square">
     <EntryImage
