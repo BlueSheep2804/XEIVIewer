@@ -11,7 +11,7 @@ export type CommonEntry = {
   type: string
   namespace: string
   path: string
-  descriptionId: string
+  name: string
   uniqueId: string
 }
 

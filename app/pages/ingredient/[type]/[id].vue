@@ -20,7 +20,7 @@ onKeyDown('u', (_) => {
 const { data: itemData, execute } = await useIngredient(ingredientType.value, ingredientId.value.full)
 await execute()
 
-const itemName = computed(() => getEntryName(itemData.value?.descriptionId))
+const itemName = computed(() => TextComponent.fromJson(itemData.value?.name))
 </script>
 
 <template>
@@ -32,9 +32,7 @@ const itemName = computed(() => getEntryName(itemData.value?.descriptionId))
         :show-link="false"
         class="max-w-17"
       />
-      <h1 class="text-4xl font-bold">
-        {{ itemName }}
-      </h1>
+      <h1 class="text-4xl font-bold" v-html="itemName.toHtml()" />
       <div class="flex gap-4 flex-wrap">
         <UButton icon="lucide:scan-search" size="xl" :to="recipeOutputUrl">
           <UKbd>R</UKbd>

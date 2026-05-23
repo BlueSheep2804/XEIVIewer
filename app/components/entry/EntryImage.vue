@@ -149,9 +149,9 @@ const tooltipItemName = computed(() => {
   }
 
   if (typeof entry !== 'undefined') {
-    return getEntryName(entry.descriptionId)
+    return TextComponent.fromJson(entry.name).toHtml()
   } else {
-    return getEntryName(entryData.value?.descriptionId)
+    return TextComponent.fromJson(entryData.value?.name).toHtml()
   }
 })
 const toolTipItemId = computed(() => {
@@ -199,7 +199,7 @@ const toolTipModId = computed(() => {
 
     <template #content>
       <div class="p-2 pointer-events-none">
-        <p>{{ tooltipItemName }}</p>
+        <p v-html="tooltipItemName" />
         <p v-if="count.toString() !== displayCount" class="text-toned text-sm">
           {{ count.toLocaleString() }}
           {{ (ingredientTypeInfo?.isMilliUnit ?? false) ? 'mB' : '' }}

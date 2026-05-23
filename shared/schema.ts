@@ -42,7 +42,7 @@ export const ingredientTable = pgTable('ingredient', {
   uniqueId: text().notNull(),
   namespace: text().notNull(),
   path: text().notNull(),
-  descriptionId: text().notNull()
+  name: text().notNull()
 })
 
 export const tagTable = pgTable('tag', {
